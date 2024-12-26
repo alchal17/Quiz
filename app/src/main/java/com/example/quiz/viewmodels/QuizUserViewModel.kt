@@ -3,7 +3,7 @@ package com.example.quiz.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quiz.api.QuizUsersApi
-import com.example.quiz.models.QuizUser
+import com.example.quiz.models.database_representation.QuizUser
 import kotlinx.coroutines.launch
 
 class QuizUserViewModel(private val quizUserApi: QuizUsersApi) : ViewModel() {

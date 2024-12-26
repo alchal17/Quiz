@@ -36,16 +36,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quiz.R
 import com.example.quiz.ui.elements.MainTopBar
-import com.example.quiz.ui.theme.CaribbeanCurrent
-import com.example.quiz.ui.theme.Champagne
-import com.example.quiz.ui.theme.DarkPurple
+import com.example.quiz.ui.theme.Azure
+import com.example.quiz.ui.theme.Copper
+import com.example.quiz.ui.theme.LapisLazuli
 
 @Composable
 fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
     var visible by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = DarkPurple,
+        containerColor = LapisLazuli,
         topBar = {
             MainTopBar()
         }) { padding ->
@@ -61,7 +61,7 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(0.8f),
                         onClick = onButtonClick,
                         shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Champagne)
+                        colors = ButtonDefaults.buttonColors(containerColor = Copper)
                     ) {
                         Row(
                             modifier = Modifier
@@ -83,7 +83,7 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                     ClickableText(
                         text = AnnotatedString("Not registered yet?"),
                         style = TextStyle(
-                            color = CaribbeanCurrent,
+                            color = Azure,
                             fontSize = 20.sp,
                             textDecoration = TextDecoration.Underline
                         ),

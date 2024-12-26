@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Scaffold
@@ -23,11 +25,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.quiz.ui.elements.MainBottomBar
 import com.example.quiz.ui.elements.MainTopBar
 import com.example.quiz.ui.pages.MainPage
+import com.example.quiz.ui.pages.NewQuizPage
 import com.example.quiz.ui.pages.SettingsPage
 import com.example.quiz.ui.routing.QuizRoutes
-import com.example.quiz.ui.theme.DarkPurple
+import com.example.quiz.ui.theme.LapisLazuli
 import com.example.quiz.ui.theme.QuizTheme
 import com.example.quiz.viewmodels.QuizUserViewModel
+import com.example.quiz.viewmodels.QuizViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class QuizActivity : ComponentActivity() {
@@ -42,7 +46,7 @@ class QuizActivity : ComponentActivity() {
 
             QuizTheme {
                 Scaffold(
-                    containerColor = DarkPurple,
+                    containerColor = LapisLazuli,
                     topBar = { MainTopBar() },
                     bottomBar = {
                         MainBottomBar(
@@ -52,19 +56,29 @@ class QuizActivity : ComponentActivity() {
                                 unselectedIcon = Icons.Outlined.Home,
                                 badgeAmount = null,
                                 onClick = {
-                                    navController.navigate(QuizRoutes.MainPage(userID))
+                                    navController.navigate(QuizRoutes.MainPage)
                                     selectedBottomBarIndex = it
                                 }
                             ), TabBarItem(
-                                title = "Setting",
-                                selectedIcon = Icons.Filled.Settings,
-                                unselectedIcon = Icons.Outlined.Settings,
+                                title = "New quiz",
+                                selectedIcon = Icons.Filled.Add,
+                                unselectedIcon = Icons.Outlined.Add,
                                 badgeAmount = null,
                                 onClick = {
-                                    navController.navigate(QuizRoutes.Settings)
+                                    navController.navigate(QuizRoutes.NewQuizPage)
                                     selectedBottomBarIndex = it
                                 }
-                            )),
+                            ),
+                                TabBarItem(
+                                    title = "Setting",
+                                    selectedIcon = Icons.Filled.Settings,
+                                    unselectedIcon = Icons.Outlined.Settings,
+                                    badgeAmount = null,
+                                    onClick = {
+                                        navController.navigate(QuizRoutes.Settings)
+                                        selectedBottomBarIndex = it
+                                    }
+                                )),
                             selectedIndex = selectedBottomBarIndex
                         )
                     }
@@ -72,11 +86,15 @@ class QuizActivity : ComponentActivity() {
                     NavHost(
                         modifier = Modifier.padding(padding),
                         navController = navController,
-                        startDestination = QuizRoutes.MainPage(userID)
+                        startDestination = QuizRoutes.MainPage
                     ) {
                         composable<QuizRoutes.MainPage> {
                             val quizUserViewModel = koinViewModel<QuizUserViewModel>()
                             MainPage(userID, quizUserViewModel)
+                        }
+                        composable<QuizRoutes.NewQuizPage> {
+                            val quizViewModel = koinViewModel<QuizViewModel>()
+                            NewQuizPage(userID, quizViewModel)
                         }
                         composable<QuizRoutes.Settings> { SettingsPage() }
                     }

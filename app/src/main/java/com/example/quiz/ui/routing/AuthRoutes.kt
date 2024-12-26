@@ -10,7 +10,4 @@ sealed interface AuthRoutes {
         @Serializable
         data object SignUp : Auth
     }
-
-//    @Serializable
-//    data class MainPage(val id: Int)
 }

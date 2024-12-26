@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -43,10 +42,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.quiz.R
 import com.example.quiz.ui.elements.MainTopBar
-import com.example.quiz.ui.theme.Champagne
-import com.example.quiz.ui.theme.DarkCyan
-import com.example.quiz.ui.theme.DarkPurple
-import com.example.quiz.ui.theme.DesertSand
+import com.example.quiz.ui.theme.Copper
+import com.example.quiz.ui.theme.SandyBrown
+import com.example.quiz.ui.theme.LapisLazuli
+import com.example.quiz.ui.theme.CafeNoir
 
 @Composable
 fun SignUpPage(
@@ -61,12 +60,12 @@ fun SignUpPage(
     var visible by remember { mutableStateOf(false) }
 
     Scaffold(floatingActionButton = {
-        FloatingActionButton(onFloatingActionButtonClick, containerColor = DesertSand) {
+        FloatingActionButton(onFloatingActionButtonClick, containerColor = CafeNoir) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back"
             )
         }
-    }, containerColor = DarkPurple, topBar = {
+    }, containerColor = LapisLazuli, topBar = {
         MainTopBar()
     }) { padding ->
         Box(
@@ -84,14 +83,14 @@ fun SignUpPage(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(50),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Champagne,
-                            unfocusedContainerColor = Champagne,
+                            focusedContainerColor = Copper,
+                            unfocusedContainerColor = Copper,
                             unfocusedIndicatorColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             focusedTextColor = Color.Black,
                             unfocusedTextColor = Color.Black,
-                            focusedLabelColor = DarkCyan,
-                            unfocusedLabelColor = DarkCyan
+                            focusedLabelColor = SandyBrown,
+                            unfocusedLabelColor = SandyBrown
                         ),
                         value = usernameValue,
                         onValueChange = onUsernameChange,
@@ -102,7 +101,7 @@ fun SignUpPage(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onAccountPick,
                         shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Champagne)
+                        colors = ButtonDefaults.buttonColors(containerColor = Copper)
                     ) {
                         Row(
                             modifier = Modifier
@@ -130,7 +129,7 @@ fun SignUpPage(
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = onRegistration,
-                        colors = ButtonDefaults.buttonColors(containerColor = DarkCyan)
+                        colors = ButtonDefaults.buttonColors(containerColor = SandyBrown)
                     ) { Text("Create an account") }
                 }
             }

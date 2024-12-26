@@ -1,6 +1,6 @@
 package com.example.quiz.api
 
-import com.example.quiz.models.QuizUser
+import com.example.quiz.models.database_representation.QuizUser
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

@@ -1,10 +1,12 @@
 package com.example.quiz.di
 
 import android.app.Application
+import com.example.quiz.api.QuizApi
 import com.example.quiz.api.QuizUsersApi
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.auth.MainSignInHelper
 import com.example.quiz.viewmodels.QuizUserViewModel
+import com.example.quiz.viewmodels.QuizViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import io.ktor.client.HttpClient
@@ -40,5 +42,10 @@ val appModule = module {
         QuizUsersApi(get())
     }
 
+    single {
+        QuizApi(get())
+    }
+
     viewModel { QuizUserViewModel(get()) }
+    viewModel { QuizViewModel(get()) }
 }

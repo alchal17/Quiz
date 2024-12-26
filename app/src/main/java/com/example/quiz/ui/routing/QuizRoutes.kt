@@ -4,8 +4,11 @@ import kotlinx.serialization.Serializable
 
 sealed interface QuizRoutes {
     @Serializable
-    data class MainPage(val userId: Int)
+    data object MainPage
 
     @Serializable
     data object Settings
+
+    @Serializable
+    data object NewQuizPage
 }

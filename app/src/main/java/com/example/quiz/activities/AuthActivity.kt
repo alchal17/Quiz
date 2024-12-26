@@ -14,7 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quiz.auth.BasicSignInHelper
-import com.example.quiz.models.QuizUser
+import com.example.quiz.models.database_representation.QuizUser
 import com.example.quiz.ui.routing.AuthRoutes
 import com.example.quiz.ui.pages.SignInPage
 import com.example.quiz.ui.pages.SignUpPage
@@ -51,7 +51,6 @@ class AuthActivity : ComponentActivity() {
                         quizUserViewModel.handleIfUserExistsByEmail(
                             email = email,
                             onTrue = { id ->
-//                                navController.navigate(AuthRoutes.MainPage(id))
                                 val intent = Intent(this@AuthActivity, QuizActivity::class.java)
                                 intent.putExtra("user_id", id)
                                 startActivity(intent)
