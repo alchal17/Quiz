@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Base64Quiz(
     val id: Int? = null,
     val name: String,
-    val user: QuizUser,
+    val userId: Int,
     @SerialName("base64_image")
     val base64Image: String?,
     val questions: List<Base64QuizQuestion>

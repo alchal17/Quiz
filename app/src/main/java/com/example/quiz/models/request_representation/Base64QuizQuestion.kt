@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Base64QuizQuestion(
     val id: Int? = null,
-    val quiz: Quiz,
     val text: String,
     val description: String?,
     @SerialName("base64_image")
