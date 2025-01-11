@@ -7,5 +7,4 @@ data class QuizQuestionOption(
     val id: Int? = null,
     val text: String,
     val isCorrect: Boolean,
-    val quizQuestion: QuizQuestion
 )

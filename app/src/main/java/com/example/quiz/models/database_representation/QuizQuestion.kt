@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class QuizQuestion(
     val id: Int? = null,
-    val quiz: Quiz,
     val text: String,
     val description: String?,
     @SerialName("image_path")

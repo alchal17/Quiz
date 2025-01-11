@@ -1,82 +1,113 @@
 package com.example.quiz.ui.pages
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.util.Base64
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.example.quiz.R
+import androidx.compose.ui.unit.sp
+import com.example.quiz.ui.elements.Base64QuizQuestionSection
+import com.example.quiz.ui.elements.NewQuizHead
+import com.example.quiz.ui.theme.Azure
+import com.example.quiz.ui.theme.SandyBrown
 import com.example.quiz.viewmodels.QuizViewModel
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
+import kotlinx.coroutines.launch
 
-fun bitmapToBase64(bitmap: Bitmap): String {
-    val outputStream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-    val byteArray = outputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
-}
-
-fun base64ToBitmap(base64String: String): Bitmap {
-    val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-}
 
 @Composable
 fun NewQuizPage(userId: Int, quizViewModel: QuizViewModel) {
-    val quizName = quizViewModel.quizName.collectAsState().value
-    val base64Image = quizViewModel.base64Image.collectAsState().value
-    val context = LocalContext.current
+    val base64Questions = quizViewModel.base64QuizQuestions.collectAsState().value
 
-    val imagePickerLauncher =
-        rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
-            uri?.let {
-                val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                val base64String = bitmapToBase64(bitmap)
-                quizViewModel.setImage(base64String)
+    val coroutineScope = rememberCoroutineScope()
+
+    val pagerState = rememberPagerState(pageCount = { base64Questions.size + 1 })
+    var previousQuestionCount by remember { mutableStateOf(base64Questions.size) }
+
+    // Scroll to the new question when added
+    LaunchedEffect(base64Questions.size) {
+        if (base64Questions.size > previousQuestionCount) {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(base64Questions.size)
             }
         }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Create a new quiz")
-        TextField(
-            value = quizName,
-            onValueChange = { quizViewModel.setName(it) },
-            label = { Text("Quiz name") })
-        IconButton({ imagePickerLauncher.launch("image/*") }) {
-            Icon(
-                painter = painterResource(R.drawable.image_logo),
-                "Pick an image"
-            )
+        previousQuestionCount = base64Questions.size
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            "Create a new quiz!",
+            fontSize = 25.sp,
+            style = TextStyle(color = SandyBrown),
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+        HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { currentPage ->
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .background(shape = RoundedCornerShape(16.dp), color = Azure)
+            ) {
+                if (currentPage == 0) {
+                    NewQuizHead(userId, quizViewModel)
+                } else {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Base64QuizQuestionSection(index = currentPage - 1, quizViewModel)
+                    }
+                }
+            }
         }
-        base64Image?.let {
-            val bitmap = base64ToBitmap(it)
-            Image(
-                painter = BitmapPainter(bitmap.asImageBitmap()),
-                contentDescription = "Selected Image",
-                modifier = Modifier.size(120.dp)
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .align(Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Previous",
+                style = TextStyle(color = Color.Black.copy(alpha = if (pagerState.canScrollBackward) 1f else 0.5f)),
+                modifier = Modifier.clickable {
+                    if (pagerState.canScrollBackward) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                })
+            Text(if (pagerState.canScrollForward) "Next question" else "New question",
+                style = TextStyle(color = Color.Black),
+                modifier = Modifier.clickable {
+                    coroutineScope.launch {
+                        if (pagerState.canScrollForward) {
+                            // Scroll to the next question
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        } else {
+                            // If we can't scroll forward, add a new question
+                            quizViewModel.addBase64Question()
+                        }
+                    }
+                })
         }
     }
 }

@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class Quiz(
     val id: Int? = null,
     val name: String,
-    val user: QuizUser,
     val imagePath: String?,
     val questions: List<QuizQuestion>
 )
