@@ -3,6 +3,7 @@ package com.example.quiz.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quiz.api.QuizApi
+import com.example.quiz.models.database_representation.QuizQuestionOption
 import com.example.quiz.models.request_representation.Base64Quiz
 import com.example.quiz.models.request_representation.Base64QuizQuestion
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,14 +37,43 @@ class QuizViewModel(private val quizApi: QuizApi) : ViewModel() {
         _base64Image.value = newBase64
     }
 
-    fun addBase64Question() {
+    fun addEmptyBase64Question() {
         val emptyBase64QuizQuestion = Base64QuizQuestion(
             text = "",
             base64Image = null,
             multipleChoices = false,
-            options = emptyList()
+            options = emptyList(),
+            secondsToAnswer = 10
         )
         _base64QuizQuestions.value += emptyBase64QuizQuestion
+    }
+
+    fun addEmptyQuestionOption(questionIndex: Int) {
+        val emptyOption = QuizQuestionOption(text = "", isCorrect = false)
+        val question = _base64QuizQuestions.value[questionIndex]
+        val optionListWithNewOption = question.options.toMutableList().apply { add(emptyOption) }
+        editBase64Question(questionIndex, question.copy(options = optionListWithNewOption))
+    }
+
+    fun editQuestionOption(
+        questionIndex: Int,
+        optionIndex: Int,
+        updatedOption: QuizQuestionOption
+    ) {
+        val question = _base64QuizQuestions.value[questionIndex]
+        val updatedOptionArray = question.options.toTypedArray()
+        updatedOptionArray[optionIndex] = updatedOption
+        val updatedQuestion = question.copy(options = updatedOptionArray.toList())
+        editBase64Question(questionIndex, updatedQuestion)
+
+    }
+
+    fun deleteQuestionOption(questionIndex: Int, optionIndex: Int) {
+        val quizQuestion = _base64QuizQuestions.value[questionIndex]
+        val options = quizQuestion.options
+        val editedOptions = options.toMutableList().apply { removeAt(optionIndex) }
+        val editedQuestion = quizQuestion.copy(options = editedOptions)
+        editBase64Question(questionIndex, editedQuestion)
     }
 
 
@@ -59,6 +89,7 @@ class QuizViewModel(private val quizApi: QuizApi) : ViewModel() {
                 name = quizName.value,
                 userId = userId,
                 base64Image = base64Image.value,
+                description = _quizDescription.value,
                 questions = base64QuizQuestions.value
             )
             quizApi.saveQuiz(base64Quiz)

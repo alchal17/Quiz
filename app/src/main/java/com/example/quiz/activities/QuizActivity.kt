@@ -37,10 +37,7 @@ import com.example.quiz.ui.pages.SettingsPage
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.LapisLazuli
 import com.example.quiz.ui.theme.QuizTheme
-import com.example.quiz.viewmodels.QuizUserViewModel
-import com.example.quiz.viewmodels.QuizViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 class QuizActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,12 +107,10 @@ class QuizActivity : ComponentActivity() {
                             startDestination = QuizRoutes.MainPage
                         ) {
                             composable<QuizRoutes.MainPage> {
-                                val quizUserViewModel = koinViewModel<QuizUserViewModel>()
-                                MainPage(userID, quizUserViewModel)
+                                MainPage(userID)
                             }
                             composable<QuizRoutes.NewQuizPage> {
-                                val quizViewModel = koinViewModel<QuizViewModel>()
-                                NewQuizPage(userID, quizViewModel)
+                                NewQuizPage(userID)
                             }
                             composable<QuizRoutes.Settings> { SettingsPage() }
                         }

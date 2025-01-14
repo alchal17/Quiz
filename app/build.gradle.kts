@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
-
 }
 
 android {
@@ -80,4 +79,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.coil.compose)
+
+    implementation(libs.numberpicker)
+
 }

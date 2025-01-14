@@ -11,5 +11,6 @@ data class Base64Quiz(
     val userId: Int,
     @SerialName("base64_image")
     val base64Image: String?,
+    val description: String?,
     val questions: List<Base64QuizQuestion>
 )

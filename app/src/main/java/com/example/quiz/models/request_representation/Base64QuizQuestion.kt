@@ -12,5 +12,7 @@ data class Base64QuizQuestion(
     val base64Image: String?,
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
-    val options: List<QuizQuestionOption>
+    val options: List<QuizQuestionOption>,
+    @SerialName("seconds_to_answer")
+    val secondsToAnswer: Int
 )

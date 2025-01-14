@@ -31,10 +31,13 @@ import com.example.quiz.ui.base64ToBitmap
 import com.example.quiz.ui.bitmapToBase64
 import com.example.quiz.ui.theme.LapisLazuli
 import com.example.quiz.viewmodels.QuizViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
 @Composable
-fun NewQuizHead(userId: Int, quizViewModel: QuizViewModel) {
+fun NewQuizHead() {
+    val quizViewModel = koinViewModel<QuizViewModel>()
+
     val quizName = quizViewModel.quizName.collectAsState().value
     val quizDescription = quizViewModel.quizDescription.collectAsState().value
     val base64Image = quizViewModel.base64Image.collectAsState().value
@@ -88,10 +91,10 @@ fun NewQuizHead(userId: Int, quizViewModel: QuizViewModel) {
             Image(
                 painter = BitmapPainter(bitmap.asImageBitmap()),
                 contentDescription = "Selected Image",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         }
     }
-
-
 }
