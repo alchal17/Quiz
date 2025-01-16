@@ -36,16 +36,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quiz.R
 import com.example.quiz.ui.elements.MainTopBar
-import com.example.quiz.ui.theme.Azure
-import com.example.quiz.ui.theme.Copper
-import com.example.quiz.ui.theme.LapisLazuli
+import com.example.quiz.ui.theme.SecondaryColor1
+import com.example.quiz.ui.theme.SecondaryColor3
+import com.example.quiz.ui.theme.MainColor
 
 @Composable
 fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
     var visible by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = LapisLazuli,
+        containerColor = MainColor,
         topBar = {
             MainTopBar()
         }) { padding ->
@@ -61,7 +61,7 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(0.8f),
                         onClick = onButtonClick,
                         shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Copper)
+                        colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor3)
                     ) {
                         Row(
                             modifier = Modifier
@@ -79,11 +79,11 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                             Text("Sign in with Google", fontSize = 20.sp)
                         }
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     ClickableText(
                         text = AnnotatedString("Not registered yet?"),
                         style = TextStyle(
-                            color = Azure,
+                            color = SecondaryColor1,
                             fontSize = 20.sp,
                             textDecoration = TextDecoration.Underline
                         ),

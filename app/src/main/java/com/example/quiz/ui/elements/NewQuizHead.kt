@@ -5,12 +5,18 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -23,17 +29,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.quiz.R
 import com.example.quiz.ui.base64ToBitmap
 import com.example.quiz.ui.bitmapToBase64
-import com.example.quiz.ui.theme.LapisLazuli
+import com.example.quiz.ui.theme.MainColor
+import com.example.quiz.ui.theme.SecondaryColor4
+import com.example.quiz.ui.theme.mainTextFieldColors
 import com.example.quiz.viewmodels.QuizViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
+@Preview
 @Composable
 fun NewQuizHead() {
     val quizViewModel = koinViewModel<QuizViewModel>()
@@ -60,41 +75,72 @@ fun NewQuizHead() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            "Main information",
+            style = TextStyle(SecondaryColor4),
+            fontFamily = FontFamily(Font(R.font.oswald_regular)),
+            fontSize = 25.sp,
+        )
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             value = quizName,
             onValueChange = { quizViewModel.setName(it) },
-            label = { Text("Quiz name") })
+            label = { Text("Quiz name") },
+            colors = mainTextFieldColors(),
+            singleLine = true,
+            shape = RoundedCornerShape(25)
+        )
         Spacer(modifier = Modifier.height(10.dp))
         TextField(
             value = quizDescription,
             onValueChange = { quizViewModel.setDescription(it) },
-            label = { Text("Quiz description") })
+            label = { Text("Quiz description") },
+            colors = mainTextFieldColors(),
+            maxLines = 3,
+            shape = RoundedCornerShape(25)
+        )
 
-        Button(
-            onClick = { imagePickerLauncher.launch("image/*") },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = LapisLazuli,
-                contentColor = Color.White
-            )
-        ) {
-            Row {
-                Icon(
-                    painter = painterResource(R.drawable.image_logo),
-                    "Pick an image"
+        Spacer(modifier = Modifier.height(20.dp))
+
+        if (base64Image == null) {
+            Button(
+                onClick = { imagePickerLauncher.launch("image/*") },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MainColor,
+                    contentColor = Color.White
                 )
-                Text("Add an image")
+            ) {
+                Row {
+                    Icon(
+                        painter = painterResource(R.drawable.image_logo),
+                        "Pick an image"
+                    )
+                    Text("Add an image", fontFamily = FontFamily(Font(R.font.oswald_light)))
+                }
             }
         }
+
         base64Image?.let {
             val bitmap = base64ToBitmap(it)
-            Image(
-                painter = BitmapPainter(bitmap.asImageBitmap()),
-                contentDescription = "Selected Image",
-                modifier = Modifier
-                    .size(120.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+
+            Box(modifier = Modifier.size(300.dp)) {
+                Image(
+                    painter = BitmapPainter(bitmap.asImageBitmap()),
+                    contentDescription = "Selected Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    "Delete the image",
+                    modifier = Modifier
+                        .align(
+                            Alignment.TopEnd
+                        )
+                        .padding(4.dp)
+                        .clickable { quizViewModel.setImage(null) }
+                )
+            }
         }
     }
 }

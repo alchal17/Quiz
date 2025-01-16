@@ -25,12 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quiz.R
 import com.example.quiz.ui.elements.Base64QuizQuestionCreation
 import com.example.quiz.ui.elements.NewQuizHead
-import com.example.quiz.ui.theme.Azure
-import com.example.quiz.ui.theme.SandyBrown
+import com.example.quiz.ui.theme.SecondaryColor1
+import com.example.quiz.ui.theme.SecondaryColor2
 import com.example.quiz.viewmodels.QuizViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -60,8 +63,9 @@ fun NewQuizPage(userId: Int) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             "Create a new quiz!",
-            fontSize = 25.sp,
-            style = TextStyle(color = SandyBrown),
+            fontFamily = FontFamily(Font(R.font.oswald_regular)),
+            fontSize = 35.sp,
+            style = TextStyle(color = SecondaryColor2),
             modifier = Modifier
                 .padding(top = 5.dp)
                 .align(Alignment.CenterHorizontally)
@@ -70,7 +74,7 @@ fun NewQuizPage(userId: Int) {
             Column(
                 modifier = Modifier
                     .padding(20.dp)
-                    .background(shape = RoundedCornerShape(16.dp), color = Azure)
+                    .background(shape = RoundedCornerShape(16.dp), color = SecondaryColor1)
             ) {
                 if (currentPage == 0) {
                     NewQuizHead()

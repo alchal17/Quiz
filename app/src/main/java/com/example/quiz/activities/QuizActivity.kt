@@ -35,7 +35,7 @@ import com.example.quiz.ui.pages.MainPage
 import com.example.quiz.ui.pages.NewQuizPage
 import com.example.quiz.ui.pages.SettingsPage
 import com.example.quiz.ui.routing.QuizRoutes
-import com.example.quiz.ui.theme.LapisLazuli
+import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.QuizTheme
 import kotlinx.coroutines.launch
 
@@ -89,7 +89,7 @@ class QuizActivity : ComponentActivity() {
                         }
                     }) {
                     Scaffold(
-                        containerColor = LapisLazuli,
+                        containerColor = MainColor,
                         topBar = {
                             MainTopBar {
                                 IconButton({

@@ -25,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,17 +34,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.quiz.R
 import com.example.quiz.ui.elements.MainTopBar
-import com.example.quiz.ui.theme.Copper
-import com.example.quiz.ui.theme.SandyBrown
-import com.example.quiz.ui.theme.LapisLazuli
-import com.example.quiz.ui.theme.CafeNoir
+import com.example.quiz.ui.theme.SecondaryColor4
+import com.example.quiz.ui.theme.SecondaryColor3
+import com.example.quiz.ui.theme.MainColor
+import com.example.quiz.ui.theme.SecondaryColor2
+import com.example.quiz.ui.theme.mainTextFieldColors
 
 @Composable
 fun SignUpPage(
@@ -60,12 +59,12 @@ fun SignUpPage(
     var visible by remember { mutableStateOf(false) }
 
     Scaffold(floatingActionButton = {
-        FloatingActionButton(onFloatingActionButtonClick, containerColor = CafeNoir) {
+        FloatingActionButton(onFloatingActionButtonClick, containerColor = SecondaryColor4) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back"
             )
         }
-    }, containerColor = LapisLazuli, topBar = {
+    }, containerColor = MainColor, topBar = {
         MainTopBar()
     }) { padding ->
         Box(
@@ -82,16 +81,7 @@ fun SignUpPage(
                         label = { Text(if (usernameValue.length in 8..20) "Enter a username" else "Enter a username(8-20)") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(50),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Copper,
-                            unfocusedContainerColor = Copper,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            focusedLabelColor = SandyBrown,
-                            unfocusedLabelColor = SandyBrown
-                        ),
+                        colors = mainTextFieldColors(),
                         value = usernameValue,
                         onValueChange = onUsernameChange,
                         singleLine = true,
@@ -101,7 +91,7 @@ fun SignUpPage(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = onAccountPick,
                         shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Copper)
+                        colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor3)
                     ) {
                         Row(
                             modifier = Modifier
@@ -129,7 +119,7 @@ fun SignUpPage(
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = onRegistration,
-                        colors = ButtonDefaults.buttonColors(containerColor = SandyBrown)
+                        colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor2)
                     ) { Text("Create an account") }
                 }
             }

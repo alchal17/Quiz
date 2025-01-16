@@ -33,7 +33,7 @@ class QuizViewModel(private val quizApi: QuizApi) : ViewModel() {
         _quizDescription.value = newValue
     }
 
-    fun setImage(newBase64: String) {
+    fun setImage(newBase64: String?) {
         _base64Image.value = newBase64
     }
 
@@ -42,7 +42,7 @@ class QuizViewModel(private val quizApi: QuizApi) : ViewModel() {
             text = "",
             base64Image = null,
             multipleChoices = false,
-            options = emptyList(),
+            options = List(2) { QuizQuestionOption(text = "", isCorrect = false) },
             secondsToAnswer = 10
         )
         _base64QuizQuestions.value += emptyBase64QuizQuestion

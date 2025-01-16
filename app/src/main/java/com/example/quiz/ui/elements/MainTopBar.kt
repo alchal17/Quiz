@@ -20,7 +20,7 @@ fun MainTopBar(navigationIconContent: @Composable () -> Unit = {}) {
             Text(
                 "Askme",
                 color = Color.White,
-                fontFamily = FontFamily(Font(R.font.oswald_regular)),
+                fontFamily = FontFamily(Font(R.font.oswald_bold)),
                 fontSize = 30.sp,
             )
         },
