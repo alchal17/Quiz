@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class QuizViewModel(private val quizApi: QuizApi) : ViewModel() {
+class QuizCreationViewModel(private val quizApi: QuizApi) : ViewModel() {
     private val _quizName = MutableStateFlow("")
     val quizName: StateFlow<String> = _quizName.asStateFlow()
 

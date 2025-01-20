@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 data class QuizQuestion(
     val id: Int? = null,
     val text: String,
-    val description: String?,
     @SerialName("image_path")
     val imagePath: String?,
     @SerialName("multiple_choices")

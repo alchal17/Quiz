@@ -44,18 +44,18 @@ import com.example.quiz.ui.bitmapToBase64
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.SecondaryColor4
 import com.example.quiz.ui.theme.mainTextFieldColors
-import com.example.quiz.viewmodels.QuizViewModel
+import com.example.quiz.viewmodels.QuizCreationViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
 @Preview
 @Composable
 fun NewQuizHead() {
-    val quizViewModel = koinViewModel<QuizViewModel>()
+    val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
 
-    val quizName = quizViewModel.quizName.collectAsState().value
-    val quizDescription = quizViewModel.quizDescription.collectAsState().value
-    val base64Image = quizViewModel.base64Image.collectAsState().value
+    val quizName = quizCreationViewModel.quizName.collectAsState().value
+    val quizDescription = quizCreationViewModel.quizDescription.collectAsState().value
+    val base64Image = quizCreationViewModel.base64Image.collectAsState().value
 
     val context = LocalContext.current
 
@@ -65,7 +65,7 @@ fun NewQuizHead() {
                 val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
                 val bitmap = BitmapFactory.decodeStream(inputStream)
                 val base64String = bitmapToBase64(bitmap)
-                quizViewModel.setImage(base64String)
+                quizCreationViewModel.setImage(base64String)
             }
         }
 
@@ -84,7 +84,7 @@ fun NewQuizHead() {
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             value = quizName,
-            onValueChange = { quizViewModel.setName(it) },
+            onValueChange = { quizCreationViewModel.setName(it) },
             label = { Text("Quiz name") },
             colors = mainTextFieldColors(),
             singleLine = true,
@@ -93,7 +93,7 @@ fun NewQuizHead() {
         Spacer(modifier = Modifier.height(10.dp))
         TextField(
             value = quizDescription,
-            onValueChange = { quizViewModel.setDescription(it) },
+            onValueChange = { quizCreationViewModel.setDescription(it) },
             label = { Text("Quiz description") },
             colors = mainTextFieldColors(),
             maxLines = 3,
@@ -138,7 +138,7 @@ fun NewQuizHead() {
                             Alignment.TopEnd
                         )
                         .padding(4.dp)
-                        .clickable { quizViewModel.setImage(null) }
+                        .clickable { quizCreationViewModel.setImage(null) }
                 )
             }
         }

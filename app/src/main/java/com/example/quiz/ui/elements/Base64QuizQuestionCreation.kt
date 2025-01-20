@@ -50,16 +50,16 @@ import com.example.quiz.ui.bitmapToBase64
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.SecondaryColor4
 import com.example.quiz.ui.theme.mainTextFieldColors
-import com.example.quiz.viewmodels.QuizViewModel
+import com.example.quiz.viewmodels.QuizCreationViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
 @Composable
 fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
 
-    val quizViewModel = koinViewModel<QuizViewModel>()
+    val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
 
-    val question = quizViewModel.base64QuizQuestions.collectAsState().value[quizQuestionIndex]
+    val question = quizCreationViewModel.base64QuizQuestions.collectAsState().value[quizQuestionIndex]
 
     val context = LocalContext.current
 
@@ -72,7 +72,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                 val bitmap = BitmapFactory.decodeStream(inputStream)
                 val base64String = bitmapToBase64(bitmap)
                 val updatedQuestion = question.copy(base64Image = base64String)
-                quizViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
+                quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
             }
         }
 
@@ -99,7 +99,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                 TextField(
                     value = question.text, onValueChange = {
                         val updatedQuestion = question.copy(text = it)
-                        quizViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
+                        quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
                     },
                     label = { Text("Question text") },
                     colors = mainTextFieldColors(),
@@ -146,7 +146,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                                 .padding(4.dp)
                                 .clickable {
                                     val updatedQuestion = question.copy(base64Image = null)
-                                    quizViewModel.editBase64Question(
+                                    quizCreationViewModel.editBase64Question(
                                         quizQuestionIndex,
                                         updatedQuestion
                                     )
@@ -165,7 +165,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                         val currentMultipleChoices = question.multipleChoices
                         val updatedQuestion =
                             question.copy(multipleChoices = !currentMultipleChoices)
-                        quizViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
+                        quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
                     })
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -177,7 +177,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                         value = question.secondsToAnswer,
                         onValueChange = {
                             val updatedAnswer = question.copy(secondsToAnswer = it)
-                            quizViewModel.editBase64Question(quizQuestionIndex, updatedAnswer)
+                            quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedAnswer)
                         },
                         range = 5..30
                     )
@@ -194,7 +194,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                 onValueChange = {
 
                     val updatedOption = option.copy(text = it)
-                    quizViewModel.editQuestionOption(
+                    quizCreationViewModel.editQuestionOption(
                         quizQuestionIndex,
                         optionIndex,
                         updatedOption
@@ -204,7 +204,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                 toggleCorrectQuestion = {
 
                     val updatedOption = option.copy(isCorrect = !option.isCorrect)
-                    quizViewModel.editQuestionOption(
+                    quizCreationViewModel.editQuestionOption(
                         quizQuestionIndex,
                         optionIndex,
                         updatedOption
@@ -212,7 +212,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
 
                 },
                 onDeleteClick = {
-                    quizViewModel.deleteQuestionOption(
+                    quizCreationViewModel.deleteQuestionOption(
                         questionIndex = quizQuestionIndex,
                         optionIndex = optionIndex
                     )
@@ -222,7 +222,7 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
         item {
             IconButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { quizViewModel.addEmptyQuestionOption(quizQuestionIndex) }) {
+                onClick = { quizCreationViewModel.addEmptyQuestionOption(quizQuestionIndex) }) {
                 Icon(Icons.Default.Add, contentDescription = "Add new option")
             }
         }

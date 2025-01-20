@@ -6,7 +6,8 @@ import com.example.quiz.api.QuizUsersApi
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.auth.MainSignInHelper
 import com.example.quiz.viewmodels.QuizUserViewModel
-import com.example.quiz.viewmodels.QuizViewModel
+import com.example.quiz.viewmodels.QuizCreationViewModel
+import com.example.quiz.viewmodels.QuizReadingViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import io.ktor.client.HttpClient
@@ -47,5 +48,6 @@ val appModule = module {
     }
 
     viewModel { QuizUserViewModel(get()) }
-    viewModel { QuizViewModel(get()) }
+    viewModel { QuizCreationViewModel(get()) }
+    viewModel { QuizReadingViewModel(get()) }
 }

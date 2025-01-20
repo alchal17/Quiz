@@ -34,16 +34,16 @@ import com.example.quiz.ui.elements.Base64QuizQuestionCreation
 import com.example.quiz.ui.elements.NewQuizHead
 import com.example.quiz.ui.theme.SecondaryColor1
 import com.example.quiz.ui.theme.SecondaryColor2
-import com.example.quiz.viewmodels.QuizViewModel
+import com.example.quiz.viewmodels.QuizCreationViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun NewQuizPage(userId: Int) {
-    val quizViewModel = koinViewModel<QuizViewModel>()
+    val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
 
-    val base64Questions = quizViewModel.base64QuizQuestions.collectAsState().value
+    val base64Questions = quizCreationViewModel.base64QuizQuestions.collectAsState().value
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -109,7 +109,7 @@ fun NewQuizPage(userId: Int) {
                         if (pagerState.canScrollForward) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         } else {
-                            quizViewModel.addEmptyBase64Question()
+                            quizCreationViewModel.addEmptyBase64Question()
                         }
                     }
                 })
@@ -117,7 +117,7 @@ fun NewQuizPage(userId: Int) {
                 "Finish",
                 style = TextStyle(color = Color.Black),
                 modifier = Modifier.clickable {
-                    quizViewModel.saveQuiz(userId)
+                    quizCreationViewModel.saveQuiz(userId)
                 })
         }
     }
