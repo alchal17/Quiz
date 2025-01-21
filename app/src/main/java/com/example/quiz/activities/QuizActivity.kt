@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import com.example.quiz.ui.elements.MainTopBar
 import com.example.quiz.ui.pages.MainPage
 import com.example.quiz.ui.pages.NewQuizPage
 import com.example.quiz.ui.pages.SettingsPage
+import com.example.quiz.ui.pages.UserQuizzesPage
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.QuizTheme
@@ -63,6 +65,11 @@ class QuizActivity : ComponentActivity() {
                         selectedIcon = Icons.Default.Add,
                         QuizRoutes.NewQuizPage
                     ),
+                    TabBarItem(
+                        title = "Your quizzes",
+                        selectedIcon = Icons.Default.Person,
+                        destination = QuizRoutes.UserQuizzesPage,
+                    )
                 )
 
             QuizTheme {
@@ -109,10 +116,17 @@ class QuizActivity : ComponentActivity() {
                             composable<QuizRoutes.MainPage> {
                                 MainPage(userID)
                             }
+
                             composable<QuizRoutes.NewQuizPage> {
-                                NewQuizPage(userID)
+                                NewQuizPage(
+                                    userID,
+                                    navController
+                                )
                             }
+
                             composable<QuizRoutes.Settings> { SettingsPage() }
+
+                            composable<QuizRoutes.UserQuizzesPage> { UserQuizzesPage() }
                         }
                     }
                 }

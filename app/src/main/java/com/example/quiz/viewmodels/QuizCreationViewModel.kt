@@ -1,7 +1,6 @@
 package com.example.quiz.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.quiz.api.QuizApi
 import com.example.quiz.models.database_representation.QuizQuestionOption
 import com.example.quiz.models.request_representation.Base64Quiz
@@ -9,7 +8,6 @@ import com.example.quiz.models.request_representation.Base64QuizQuestion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class QuizCreationViewModel(private val quizApi: QuizApi) : ViewModel() {
     private val _quizName = MutableStateFlow("")
@@ -35,6 +33,26 @@ class QuizCreationViewModel(private val quizApi: QuizApi) : ViewModel() {
 
     fun setImage(newBase64: String?) {
         _base64Image.value = newBase64
+    }
+
+    fun clearCorrectOptions(questionIndex: Int) {
+        val question = _base64QuizQuestions.value[questionIndex]
+        val newOptions = question.options.map { option ->
+            option.copy(isCorrect = false)
+        }
+        val newQuestion =
+            question.copy(options = newOptions)
+        editBase64Question(questionIndex, newQuestion)
+    }
+
+    fun toggleMultipleOptions(questionIndex: Int) {
+        val question = _base64QuizQuestions.value[questionIndex]
+        val newOptions = question.options.map { option ->
+            option.copy(isCorrect = false)
+        }
+        val newQuestion =
+            question.copy(multipleChoices = !question.multipleChoices, options = newOptions)
+        editBase64Question(questionIndex, newQuestion)
     }
 
     fun addEmptyBase64Question() {
@@ -76,6 +94,12 @@ class QuizCreationViewModel(private val quizApi: QuizApi) : ViewModel() {
         editBase64Question(questionIndex, editedQuestion)
     }
 
+    fun deleteQuestionByIndex(questionIndex: Int) {
+        val questionsCopy =
+            _base64QuizQuestions.value.toMutableList().apply { removeAt(questionIndex) }
+        _base64QuizQuestions.value = questionsCopy
+    }
+
 
     fun editBase64Question(index: Int, editedQuestion: Base64QuizQuestion) {
         val questionsCopy =
@@ -83,17 +107,14 @@ class QuizCreationViewModel(private val quizApi: QuizApi) : ViewModel() {
         _base64QuizQuestions.value = questionsCopy.toList()
     }
 
-    fun saveQuiz(userId: Int, onSuccess: () -> Unit = {}) {
-        viewModelScope.launch {
-            val base64Quiz = Base64Quiz(
-                name = quizName.value,
-                userId = userId,
-                base64Image = base64Image.value,
-                description = _quizDescription.value,
-                questions = base64QuizQuestions.value
-            )
-            quizApi.saveQuiz(base64Quiz)
-            onSuccess()
-        }
+    suspend fun saveQuiz(userId: Int) {
+        val base64Quiz = Base64Quiz(
+            name = quizName.value,
+            userId = userId,
+            base64Image = base64Image.value,
+            description = _quizDescription.value,
+            questions = base64QuizQuestions.value
+        )
+        quizApi.saveQuiz(base64Quiz)
     }
 }

@@ -5,15 +5,18 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
@@ -26,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -83,6 +87,7 @@ fun NewQuizHead() {
         )
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth(0.8f),
             value = quizName,
             onValueChange = { quizCreationViewModel.setName(it) },
             label = { Text("Quiz name") },
@@ -92,6 +97,7 @@ fun NewQuizHead() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         TextField(
+            modifier = Modifier.fillMaxWidth(0.8f),
             value = quizDescription,
             onValueChange = { quizCreationViewModel.setDescription(it) },
             label = { Text("Quiz description") },
@@ -123,23 +129,33 @@ fun NewQuizHead() {
         base64Image?.let {
             val bitmap = base64ToBitmap(it)
 
-            Box(modifier = Modifier.size(300.dp)) {
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+                    .clip(shape = RoundedCornerShape(8.dp))
+            ) {
                 Image(
                     painter = BitmapPainter(bitmap.asImageBitmap()),
                     contentDescription = "Selected Image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    "Delete the image",
+                Box(
                     modifier = Modifier
                         .align(
                             Alignment.TopEnd
                         )
                         .padding(4.dp)
                         .clickable { quizCreationViewModel.setImage(null) }
-                )
+                        .clip(shape = CircleShape)
+                        .background(color = Color.White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        "Delete the image",
+                    )
+                }
             }
         }
     }

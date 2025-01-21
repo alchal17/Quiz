@@ -1,5 +1,6 @@
 package com.example.quiz.ui.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,14 +25,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.quiz.R
 import com.example.quiz.ui.elements.Base64QuizQuestionCreation
 import com.example.quiz.ui.elements.NewQuizHead
+import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.SecondaryColor1
 import com.example.quiz.ui.theme.SecondaryColor2
 import com.example.quiz.viewmodels.QuizCreationViewModel
@@ -40,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun NewQuizPage(userId: Int) {
+fun NewQuizPage(userId: Int, navController: NavController) {
     val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
 
     val base64Questions = quizCreationViewModel.base64QuizQuestions.collectAsState().value
@@ -49,6 +53,8 @@ fun NewQuizPage(userId: Int) {
 
     val pagerState = rememberPagerState(pageCount = { base64Questions.size + 1 })
     var previousQuestionCount by remember { mutableIntStateOf(base64Questions.size) }
+
+    val context = LocalContext.current
 
     // Scroll to the new question when added
     LaunchedEffect(base64Questions.size) {
@@ -94,6 +100,7 @@ fun NewQuizPage(userId: Int) {
         ) {
             Text(
                 "Previous",
+                fontSize = 15.sp,
                 style = TextStyle(color = Color.Black.copy(alpha = if (pagerState.canScrollBackward) 1f else 0.5f)),
                 modifier = Modifier.clickable {
                     if (pagerState.canScrollBackward) {
@@ -103,22 +110,53 @@ fun NewQuizPage(userId: Int) {
                     }
                 })
             Text(if (pagerState.canScrollForward) "Next question" else "New question",
+                fontSize = 15.sp,
                 style = TextStyle(color = Color.Black),
                 modifier = Modifier.clickable {
                     coroutineScope.launch {
                         if (pagerState.canScrollForward) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        } else {
+                        } else if (base64Questions.size < 50) {
                             quizCreationViewModel.addEmptyBase64Question()
                         }
                     }
                 })
             Text(
                 "Finish",
+                fontSize = 15.sp,
                 style = TextStyle(color = Color.Black),
                 modifier = Modifier.clickable {
-                    quizCreationViewModel.saveQuiz(userId)
-                })
+                    coroutineScope.launch {
+                        if (base64Questions.size < 3) {
+                            Toast.makeText(
+                                context,
+                                "A quiz should contain at least 3 questions",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            val invalidQuestion = base64Questions.find { question ->
+                                question.options.all { option -> !option.isCorrect }
+                            }
+                            if (invalidQuestion != null) {
+                                val invalidQuestionIndex =
+                                    base64Questions.indexOf(invalidQuestion) + 1
+                                Toast.makeText(
+                                    context,
+                                    "Question $invalidQuestionIndex has no correct options",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                quizCreationViewModel.saveQuiz(userId)
+                                navController.navigate(QuizRoutes.MainPage) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -59,7 +63,8 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
 
     val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
 
-    val question = quizCreationViewModel.base64QuizQuestions.collectAsState().value[quizQuestionIndex]
+    val question =
+        quizCreationViewModel.base64QuizQuestions.collectAsState().value[quizQuestionIndex]
 
     val context = LocalContext.current
 
@@ -88,23 +93,48 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    "Question ${quizQuestionIndex + 1}:",
-                    style = TextStyle(SecondaryColor4),
-                    fontFamily = FontFamily(Font(R.font.oswald_regular)),
-                    fontSize = 25.sp,
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Question ${quizQuestionIndex + 1}",
+                        style = TextStyle(SecondaryColor4),
+                        fontFamily = FontFamily(Font(R.font.oswald_regular)),
+                        fontSize = 25.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = { quizCreationViewModel.deleteQuestionByIndex(quizQuestionIndex) },
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(color = Color.Red),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Delete, "delete the question")
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(20.dp))
-
                 TextField(
                     value = question.text, onValueChange = {
                         val updatedQuestion = question.copy(text = it)
-                        quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
+                        quizCreationViewModel.editBase64Question(
+                            quizQuestionIndex,
+                            updatedQuestion
+                        )
                     },
                     label = { Text("Question text") },
                     colors = mainTextFieldColors(),
                     singleLine = true,
-                    shape = RoundedCornerShape(25)
+                    shape = RoundedCornerShape(25),
+                    modifier = Modifier.fillMaxWidth(0.8f)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 if (base64Image == null) {
@@ -129,43 +159,45 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                 }
                 base64Image?.let {
                     val bitmap = base64ToBitmap(it)
-                    Box(modifier = Modifier.size(300.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .size(300.dp)
+                            .clip(shape = RoundedCornerShape(8.dp))
+                    ) {
                         Image(
                             painter = BitmapPainter(bitmap.asImageBitmap()),
                             contentDescription = "Selected Image",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            "Delete the image",
+                        Box(
                             modifier = Modifier
                                 .align(
                                     Alignment.TopEnd
                                 )
                                 .padding(4.dp)
-                                .clickable {
-                                    val updatedQuestion = question.copy(base64Image = null)
-                                    quizCreationViewModel.editBase64Question(
-                                        quizQuestionIndex,
-                                        updatedQuestion
-                                    )
-                                }
-                        )
+                                .padding(4.dp)
+                                .clickable { quizCreationViewModel.setImage(null) }
+                                .clip(shape = CircleShape)
+                                .background(color = Color.White),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                "Delete the image",
+                            )
+                        }
                     }
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Allow multiple correct options",
+                        "Allow multiple correct options:",
                         fontFamily = FontFamily(Font(R.font.oswald_light))
                     )
                     RadioButton(selected = question.multipleChoices, onClick = {
-                        val currentMultipleChoices = question.multipleChoices
-                        val updatedQuestion =
-                            question.copy(multipleChoices = !currentMultipleChoices)
-                        quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedQuestion)
+                        quizCreationViewModel.toggleMultipleOptions(quizQuestionIndex)
                     })
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -174,57 +206,82 @@ fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
                         fontFamily = FontFamily(Font(R.font.oswald_light))
                     )
                     NumberPicker(
+                        dividersColor = Color.Black,
                         value = question.secondsToAnswer,
                         onValueChange = {
                             val updatedAnswer = question.copy(secondsToAnswer = it)
-                            quizCreationViewModel.editBase64Question(quizQuestionIndex, updatedAnswer)
+                            quizCreationViewModel.editBase64Question(
+                                quizQuestionIndex,
+                                updatedAnswer
+                            )
                         },
                         range = 5..30
                     )
                 }
-                Text("Add options(2-6)", fontFamily = FontFamily(Font(R.font.oswald_light)))
+                Text(
+                    "Add options(2-6) and choose correct options:",
+                    fontFamily = FontFamily(Font(R.font.oswald_light))
+                )
             }
         }
 
+        item {
+            Spacer(Modifier.height(10.dp))
+        }
 
         itemsIndexed(question.options) { optionIndex, option ->
-            QuestionOptionTextField(
-                option = option,
-                labelText = "Option ${optionIndex + 1}",
-                onValueChange = {
 
-                    val updatedOption = option.copy(text = it)
-                    quizCreationViewModel.editQuestionOption(
-                        quizQuestionIndex,
-                        optionIndex,
-                        updatedOption
-                    )
+            Box(modifier = Modifier.fillMaxWidth(0.8f)) {
+                QuestionOptionTextField(
+                    option = option,
+                    labelText = "Option ${optionIndex + 1}",
+                    onValueChange = {
+                        val updatedOption = option.copy(text = it)
+                        quizCreationViewModel.editQuestionOption(
+                            quizQuestionIndex,
+                            optionIndex,
+                            updatedOption
+                        )
+                    },
+                    toggleCorrectQuestion = {
+                        if (!question.multipleChoices) {
+                            quizCreationViewModel.clearCorrectOptions(quizQuestionIndex)
+                        }
 
-                },
-                toggleCorrectQuestion = {
+                        val updatedOption = option.copy(isCorrect = !option.isCorrect)
+                        quizCreationViewModel.editQuestionOption(
+                            quizQuestionIndex,
+                            optionIndex,
+                            updatedOption
+                        )
 
-                    val updatedOption = option.copy(isCorrect = !option.isCorrect)
-                    quizCreationViewModel.editQuestionOption(
-                        quizQuestionIndex,
-                        optionIndex,
-                        updatedOption
-                    )
-
-                },
-                onDeleteClick = {
-                    quizCreationViewModel.deleteQuestionOption(
-                        questionIndex = quizQuestionIndex,
-                        optionIndex = optionIndex
-                    )
+                    },
+                    onDeleteClick = {
+                        quizCreationViewModel.deleteQuestionOption(
+                            questionIndex = quizQuestionIndex,
+                            optionIndex = optionIndex
+                        )
+                    },
+                    multipleOptions = question.multipleChoices,
+                    includeDeletion = question.options.size > 2
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+        if (question.options.size < 6) {
+            item {
+                Button(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    onClick = { quizCreationViewModel.addEmptyQuestionOption(quizQuestionIndex) }) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Add, contentDescription = "Add new option")
+                        Text("Add an option")
+                    }
                 }
-            )
+            }
         }
         item {
-            IconButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { quizCreationViewModel.addEmptyQuestionOption(quizQuestionIndex) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add new option")
-            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
