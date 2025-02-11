@@ -54,14 +54,13 @@ import com.example.quiz.ui.bitmapToBase64
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.SecondaryColor4
 import com.example.quiz.ui.theme.mainTextFieldColors
-import com.example.quiz.viewmodels.QuizCreationViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
 @Composable
 fun Base64QuizQuestionCreation(quizQuestionIndex: Int) {
 
-    val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
+    val quizCreationViewModel = koinViewModel<QuizManagingViewModel>()
 
     val question =
         quizCreationViewModel.base64QuizQuestions.collectAsState().value[quizQuestionIndex]

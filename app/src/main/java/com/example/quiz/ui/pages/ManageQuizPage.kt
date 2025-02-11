@@ -38,16 +38,23 @@ import com.example.quiz.ui.elements.NewQuizHead
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.SecondaryColor1
 import com.example.quiz.ui.theme.SecondaryColor2
-import com.example.quiz.viewmodels.QuizCreationViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 
 @Composable
-fun NewQuizPage(userId: Int, navController: NavController) {
-    val quizCreationViewModel = koinViewModel<QuizCreationViewModel>()
+fun ManageQuizPage(
+    userId: Int,
+    navController: NavController,
+    headerText: String,
+    initialQuizId: Int?,
+) {
 
-    val base64Questions = quizCreationViewModel.base64QuizQuestions.collectAsState().value
+    val quizManagingViewModel: QuizManagingViewModel =
+        koinViewModel { parametersOf(initialQuizId) }
+
+    val base64Questions = quizManagingViewModel.base64QuizQuestions.collectAsState().value
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -55,6 +62,7 @@ fun NewQuizPage(userId: Int, navController: NavController) {
     var previousQuestionCount by remember { mutableIntStateOf(base64Questions.size) }
 
     val context = LocalContext.current
+
 
     // Scroll to the new question when added
     LaunchedEffect(base64Questions.size) {
@@ -68,7 +76,7 @@ fun NewQuizPage(userId: Int, navController: NavController) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            "Create a new quiz!",
+            headerText,
             fontFamily = FontFamily(Font(R.font.oswald_regular)),
             fontSize = 35.sp,
             style = TextStyle(color = SecondaryColor2),
@@ -117,7 +125,7 @@ fun NewQuizPage(userId: Int, navController: NavController) {
                         if (pagerState.canScrollForward) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         } else if (base64Questions.size < 50) {
-                            quizCreationViewModel.addEmptyBase64Question()
+                            quizManagingViewModel.addEmptyBase64Question()
                         }
                     }
                 })
@@ -146,7 +154,13 @@ fun NewQuizPage(userId: Int, navController: NavController) {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
-                                quizCreationViewModel.saveQuiz(userId)
+//                                quizManagingViewModel.saveQuiz(userId)
+//                                onFinishClick()
+                                if (initialQuizId == null) {
+                                    quizManagingViewModel.saveQuiz(userId)
+                                } else {
+                                    quizManagingViewModel.updateQuizByUserId(userId)
+                                }
                                 navController.navigate(QuizRoutes.MainPage) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         inclusive = true

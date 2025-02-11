@@ -1,18 +1,19 @@
 package com.example.quiz.models.request_representation
 
-import com.example.quiz.models.database_representation.QuizQuestionOption
+import com.example.quiz.models.Model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Base64QuizQuestion(
-    val id: Int? = null,
+    override val id: Int? = null,
+    @SerialName("quiz_id")
+    val quizId: Int,
     val text: String,
     @SerialName("base64_image")
     val base64Image: String?,
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
-    val options: List<QuizQuestionOption>,
     @SerialName("seconds_to_answer")
     val secondsToAnswer: Int
-)
+) : Model

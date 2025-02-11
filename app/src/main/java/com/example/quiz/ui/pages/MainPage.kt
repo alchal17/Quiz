@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.quiz.ui.elements.QuizCard
-import com.example.quiz.viewmodels.QuizReadingViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

@@ -31,15 +31,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.quiz.ui.elements.MainTopBar
 import com.example.quiz.ui.pages.MainPage
-import com.example.quiz.ui.pages.NewQuizPage
+import com.example.quiz.ui.pages.ManageQuizPage
 import com.example.quiz.ui.pages.SettingsPage
 import com.example.quiz.ui.pages.UserQuizzesPage
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.QuizTheme
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class QuizActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +66,7 @@ class QuizActivity : ComponentActivity() {
                     TabBarItem(
                         "New quiz",
                         selectedIcon = Icons.Default.Add,
-                        QuizRoutes.NewQuizPage
+                        QuizRoutes.ManageQuizPage()
                     ),
                     TabBarItem(
                         title = "Your quizzes",
@@ -117,16 +120,26 @@ class QuizActivity : ComponentActivity() {
                                 MainPage(userID)
                             }
 
-                            composable<QuizRoutes.NewQuizPage> {
-                                NewQuizPage(
-                                    userID,
-                                    navController
+                            composable<QuizRoutes.ManageQuizPage> {
+                                val args = it.toRoute<QuizRoutes.ManageQuizPage>()
+                                val quizManagingViewModel: QuizManagingViewModel =
+                                    koinViewModel { parametersOf(args.base64QuizId) }
+                                ManageQuizPage(
+                                    navController = navController,
+                                    headerText = args.headerText,
+                                    userId = userID,
+                                    initialQuizId = args.base64QuizId,
                                 )
                             }
 
                             composable<QuizRoutes.Settings> { SettingsPage() }
 
-                            composable<QuizRoutes.UserQuizzesPage> { UserQuizzesPage() }
+                            composable<QuizRoutes.UserQuizzesPage> {
+                                UserQuizzesPage(
+                                    userID,
+                                    navController
+                                )
+                            }
                         }
                     }
                 }

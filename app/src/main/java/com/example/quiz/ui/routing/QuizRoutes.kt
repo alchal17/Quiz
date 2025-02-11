@@ -11,7 +11,11 @@ sealed interface QuizRoutes {
     data object Settings : QuizRoutes
 
     @Serializable
-    data object NewQuizPage : QuizRoutes
+    data class ManageQuizPage(
+        val headerText: String = "Create a new quiz!",
+        val base64QuizId: Int? = null
+    ) :
+        QuizRoutes
 
     @Serializable
     data object UserQuizzesPage : QuizRoutes

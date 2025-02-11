@@ -2,12 +2,15 @@ package com.example.quiz.di
 
 import android.app.Application
 import com.example.quiz.api.QuizApi
-import com.example.quiz.api.QuizUsersApi
+import com.example.quiz.api.QuizQuestionOptionsAPI
+import com.example.quiz.api.QuizQuestionsAPI
+import com.example.quiz.api.QuizUsersAPI
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.auth.MainSignInHelper
+import com.example.quiz.viewmodels.QuizQuestionOptionViewModel
+import com.example.quiz.viewmodels.QuizQuestionViewModel
 import com.example.quiz.viewmodels.QuizUserViewModel
-import com.example.quiz.viewmodels.QuizCreationViewModel
-import com.example.quiz.viewmodels.QuizReadingViewModel
+import com.example.quiz.viewmodels.QuizViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import io.ktor.client.HttpClient
@@ -15,7 +18,9 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
@@ -27,9 +32,7 @@ val appModule = module {
         GoogleSignIn.getClient(get<Application>(), gso)
     }
 
-    single<BasicSignInHelper> {
-        MainSignInHelper(get())
-    }
+    singleOf(::MainSignInHelper) { bind<BasicSignInHelper>() }
 
     single {
         HttpClient(CIO) {
@@ -39,15 +42,14 @@ val appModule = module {
         }
     }
 
-    single {
-        QuizUsersApi(get())
-    }
 
-    single {
-        QuizApi(get())
-    }
+    singleOf(::QuizUsersAPI)
+    singleOf(::QuizApi)
+    singleOf(::QuizQuestionsAPI)
+    singleOf(::QuizQuestionOptionsAPI)
 
-    viewModel { QuizUserViewModel(get()) }
-    viewModel { QuizCreationViewModel(get()) }
-    viewModel { QuizReadingViewModel(get()) }
+    viewModelOf(::QuizUserViewModel)
+    viewModelOf(::QuizViewModel)
+    viewModelOf(::QuizQuestionViewModel)
+    viewModelOf(::QuizQuestionOptionViewModel)
 }

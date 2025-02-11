@@ -2,11 +2,12 @@ package com.example.quiz.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quiz.api.QuizUsersApi
+import com.example.quiz.api.ApiResponse
+import com.example.quiz.api.QuizUsersAPI
 import com.example.quiz.models.database_representation.QuizUser
 import kotlinx.coroutines.launch
 
-class QuizUserViewModel(private val quizUserApi: QuizUsersApi) : ViewModel() {
+class QuizUserViewModel(private val quizUserApi: QuizUsersAPI) : ViewModel() {
     fun handleIfUserExistsByEmail(
         email: String,
         onTrue: (userID: Int) -> Unit,
@@ -39,7 +40,12 @@ class QuizUserViewModel(private val quizUserApi: QuizUsersApi) : ViewModel() {
     }
 
 
-    suspend fun findUserById(id: Int): QuizUser? = quizUserApi.getUserById(id).getOrNull()
+    suspend fun findUserById(id: Int): QuizUser? {
+        return when(val apiResponse = quizUserApi.getById(id)){
+            is ApiResponse.Error -> null
+            is ApiResponse.Success -> apiResponse.data
+        }
+    }
 
     suspend fun findUserByEmail(email: String): QuizUser? =
         quizUserApi.getUserByEmail(email).getOrNull()

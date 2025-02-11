@@ -11,8 +11,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
-class QuizUsersApi(client: HttpClient) : BaseAPI(client) {
-    private val currentRoute = "/quiz_user"
+
+class QuizUsersAPI(client: HttpClient) : BaseAPI<QuizUser>(client) {
+    override val currentRoute = "/quiz_user"
+    override val serializer = QuizUser.serializer()
+
 
     suspend fun getUserByEmail(email: String): Result<QuizUser> {
         val url = "$serverPath$currentRoute/get_by_email?email=$email"
@@ -62,36 +65,6 @@ class QuizUsersApi(client: HttpClient) : BaseAPI(client) {
 
                 HttpStatusCode.BadRequest -> {
                     Result.failure(Exception("Invalid username format"))
-                }
-
-                else -> {
-                    Result.failure(Exception("Unexpected status: ${response.status}"))
-                }
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun getUserById(id: Int): Result<QuizUser> {
-        val url =
-            "$serverPath$currentRoute/get_by_id?id=$id"
-
-        return try {
-            val response: HttpResponse = client.get(url)
-
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    val user: QuizUser = response.body()
-                    Result.success(user)
-                }
-
-                HttpStatusCode.NotFound -> {
-                    Result.failure(Exception("User not found"))
-                }
-
-                HttpStatusCode.BadRequest -> {
-                    Result.failure(Exception("Invalid id format"))
                 }
 
                 else -> {
