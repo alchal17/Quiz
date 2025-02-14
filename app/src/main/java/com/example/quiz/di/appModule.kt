@@ -1,10 +1,7 @@
 package com.example.quiz.di
 
 import android.app.Application
-import com.example.quiz.api.QuizApi
-import com.example.quiz.api.QuizQuestionOptionsAPI
-import com.example.quiz.api.QuizQuestionsAPI
-import com.example.quiz.api.QuizUsersAPI
+import com.example.quiz.api.writing.Base64QuizWritingAPI
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.auth.MainSignInHelper
 import com.example.quiz.viewmodels.QuizQuestionOptionViewModel
@@ -44,7 +41,8 @@ val appModule = module {
 
 
     singleOf(::QuizUsersAPI)
-    singleOf(::QuizApi)
+    singleOf(::Base64QuizWritingAPI)
+    singleOf(::QuizAPI)
     singleOf(::QuizQuestionsAPI)
     singleOf(::QuizQuestionOptionsAPI)
 

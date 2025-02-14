@@ -1,10 +1,11 @@
-package com.example.quiz.api
+package com.example.quiz.api.reading
 
 import com.example.quiz.models.database_representation.QuizQuestionOption
 import io.ktor.client.HttpClient
 import kotlinx.serialization.KSerializer
 
-class QuizQuestionOptionsAPI(client: HttpClient): BaseAPI<QuizQuestionOption>(client) {
+class QuizQuestionOptionsReadingAPI(override val client: HttpClient) :
+    ReadingAPI<QuizQuestionOption>() {
     override val currentRoute: String
         get() = "/quiz_question_option"
 
