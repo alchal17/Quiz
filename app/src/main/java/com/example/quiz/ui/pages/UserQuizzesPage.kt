@@ -1,75 +1,56 @@
 package com.example.quiz.ui.pages
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.example.quiz.api.ApiResponse
+import com.example.quiz.models.database_representation.Quiz
 import com.example.quiz.ui.elements.QuizCard
 import com.example.quiz.ui.routing.QuizRoutes
-import kotlinx.coroutines.launch
+import com.example.quiz.viewmodels.QuizViewModel
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun UserQuizzesPage(userId: Int, navController: NavController) {
-    val quizReadingViewModel = koinViewModel<QuizReadingViewModel>()
-    val quizzes by quizReadingViewModel.quizzes.collectAsState()
+    val quizViewModel = koinViewModel<QuizViewModel>()
+    var quizzes by remember { mutableStateOf(emptyList<Quiz>()) }
 
-    val quizManagingViewModel: QuizManagingViewModel = koinViewModel { parametersOf(null) }
+    LaunchedEffect(Unit) {
+        when (val response = quizViewModel.getByUserId(userId)) {
+            is ApiResponse.Error -> {
+                //TODO: handle an error when loading user's quizzes
+            }
 
-    val coroutineScope = rememberCoroutineScope()
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item { Text("Your quizzes") }
-
-        itemsIndexed(quizzes) { index, quiz ->
-            QuizCard(
-                quiz = quiz,
-                bottomText = null,
-                topOptions = listOf(
-                    {
-                        Icon(
-                            Icons.Default.Edit,
-                            "Edit ${quiz.name}",
-                            modifier = Modifier.clickable {
-                                navController.navigate(
-                                    QuizRoutes.ManageQuizPage(
-                                        headerText = "Edit ${quiz.name}",
-                                        base64QuizId = quiz.id
-                                    )
-                                )
-                            })
-                    },
-                    {
-                        Icon(
-                            Icons.Default.Delete,
-                            "Delete ${quiz.name}",
-                            modifier = Modifier.clickable {
-                                coroutineScope.launch {
-                                    quizManagingViewModel.deleteQuizById(quiz.id ?: 0)
-                                    quizReadingViewModel.removeQuizByIndex(index)
-                                }
-                            })
-                    })
-            )
+            is ApiResponse.Success -> {
+                quizzes = response.data
+            }
         }
     }
 
-    LaunchedEffect(Unit) { quizReadingViewModel.getQuestionsByUserId(userId) }
+    Scaffold(containerColor = Color.Unspecified, floatingActionButton = {
+        FloatingActionButton(onClick = { navController.navigate(QuizRoutes.ManageQuizPage()) }) {
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = "Create a new quiz"
+            )
+        }
+    }) { padding ->
+        LazyColumn(contentPadding = padding) {
+            items(quizzes) { quiz ->
+                QuizCard(quiz)
+            }
+        }
+    }
 }

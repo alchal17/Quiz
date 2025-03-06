@@ -13,12 +13,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.quiz.api.ApiResponse
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.inner_data.saveUserData
 import com.example.quiz.models.database_representation.QuizUser
-import com.example.quiz.ui.routing.AuthRoutes
 import com.example.quiz.ui.pages.SignInPage
 import com.example.quiz.ui.pages.SignUpPage
+import com.example.quiz.ui.routing.AuthRoutes
 import com.example.quiz.ui.theme.QuizTheme
 import com.example.quiz.viewmodels.QuizUserViewModel
 import kotlinx.coroutines.launch
@@ -149,17 +150,31 @@ class AuthActivity : ComponentActivity() {
                                                     username = signUpUsername.value,
                                                     email = email
                                                 )
-                                                val newUserId = quizUserViewModel.createUser(user)
-                                                saveUserData(
-                                                    newUserId, true,
-                                                    this@AuthActivity
-                                                )
-                                                val intent = Intent(
-                                                    this@AuthActivity,
-                                                    QuizActivity::class.java
-                                                )
-                                                intent.putExtra("user_id", newUserId)
-                                                startActivity(intent)
+                                                when (val apiResponse =
+                                                    quizUserViewModel.createUser(user)) {
+                                                    is ApiResponse.Error -> {
+                                                        Toast.makeText(
+                                                            this@AuthActivity,
+                                                            apiResponse.message,
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+
+                                                    is ApiResponse.Success -> {
+                                                        val newUserId = apiResponse.data
+                                                        saveUserData(
+                                                            newUserId, true,
+                                                            this@AuthActivity
+                                                        )
+                                                        val intent = Intent(
+                                                            this@AuthActivity,
+                                                            QuizActivity::class.java
+                                                        )
+                                                        intent.putExtra("user_id", newUserId)
+                                                        startActivity(intent)
+                                                    }
+                                                }
+
                                             }
                                         }
                                     }

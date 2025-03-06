@@ -15,12 +15,17 @@ class QuizViewModel(
 ) :
     ViewModel() {
 
+
     suspend fun getBase64QuizById(id: Int): ApiResponse<Base64Quiz> {
         return base64QuizReadingAPI.getById(id)
     }
 
     suspend fun getQuizById(id: Int): ApiResponse<Quiz> {
         return quizReadingAPI.getById(id)
+    }
+
+    suspend fun getAllQuizzes(): ApiResponse<List<Quiz>> {
+        return quizReadingAPI.getAll()
     }
 
     suspend fun createBase64Quiz(quiz: Base64Quiz): ApiResponse<Int> {
@@ -33,5 +38,9 @@ class QuizViewModel(
 
     suspend fun deleteQuiz(quizId: Int): ApiResponse<String> {
         return base64QuizWritingAPI.deleteById(quizId)
+    }
+
+    suspend fun getByUserId(userId: Int): ApiResponse<List<Quiz>> {
+        return quizReadingAPI.getByUserId(userId)
     }
 }

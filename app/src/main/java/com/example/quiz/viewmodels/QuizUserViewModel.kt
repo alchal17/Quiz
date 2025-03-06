@@ -55,6 +55,7 @@ class QuizUserViewModel(
 
 
     suspend fun findUserById(id: Int): QuizUser? {
+
         return when (val apiResponse = readingAPI.getById(id)) {
             is ApiResponse.Error -> null
             is ApiResponse.Success -> apiResponse.data

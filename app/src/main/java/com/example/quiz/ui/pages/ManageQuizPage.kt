@@ -1,176 +1,231 @@
 package com.example.quiz.ui.pages
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.quiz.R
-import com.example.quiz.ui.elements.Base64QuizQuestionCreation
-import com.example.quiz.ui.elements.NewQuizHead
-import com.example.quiz.ui.routing.QuizRoutes
-import com.example.quiz.ui.theme.SecondaryColor1
-import com.example.quiz.ui.theme.SecondaryColor2
-import kotlinx.coroutines.launch
+import com.example.quiz.api.ApiResponse
+import com.example.quiz.models.request_representation.Base64Quiz
+import com.example.quiz.ui.base64ToBitmap
+import com.example.quiz.ui.bitmapToBase64
+import com.example.quiz.ui.theme.MainColor
+import com.example.quiz.viewmodels.QuizQuestionViewModel
+import com.example.quiz.viewmodels.QuizViewModel
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import java.io.InputStream
 
 
 @Composable
 fun ManageQuizPage(
     userId: Int,
     navController: NavController,
-    headerText: String,
     initialQuizId: Int?,
 ) {
+    val quizViewModel = koinViewModel<QuizViewModel>()
+    val questionViewModel = koinViewModel<QuizQuestionViewModel>()
 
-    val quizManagingViewModel: QuizManagingViewModel =
-        koinViewModel { parametersOf(initialQuizId) }
 
-    val base64Questions = quizManagingViewModel.base64QuizQuestions.collectAsState().value
-
-    val coroutineScope = rememberCoroutineScope()
-
-    val pagerState = rememberPagerState(pageCount = { base64Questions.size + 1 })
-    var previousQuestionCount by remember { mutableIntStateOf(base64Questions.size) }
+    var initialBase64Quiz: Base64Quiz? by remember { mutableStateOf(null) }
+    var newBase64Quiz by remember {
+        mutableStateOf(
+            //Creating a new empty quiz
+            Base64Quiz(
+                id = null,
+                name = "",
+                userId = userId,
+                base64Image = null,
+                description = null
+            )
+        )
+    }
 
     val context = LocalContext.current
 
-
-    // Scroll to the new question when added
-    LaunchedEffect(base64Questions.size) {
-        if (base64Questions.size > previousQuestionCount) {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(base64Questions.size)
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
+            uri?.let {
+                val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                if (initialQuizId == null) {
+                    newBase64Quiz = newBase64Quiz.copy(base64Image = bitmapToBase64(bitmap))
+                } else {
+                    initialBase64Quiz =
+                        initialBase64Quiz?.copy(base64Image = bitmapToBase64(bitmap))
+                }
             }
         }
-        previousQuestionCount = base64Questions.size
+
+
+
+    LaunchedEffect(Unit) {
+        if (initialQuizId != null) {
+            initialBase64Quiz = when (val result = quizViewModel.getBase64QuizById(initialQuizId)) {
+                is ApiResponse.Error -> {
+                    Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
+                    null
+                }
+
+                is ApiResponse.Success -> result.data
+            }
+        }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            headerText,
-            fontFamily = FontFamily(Font(R.font.oswald_regular)),
-            fontSize = 35.sp,
-            style = TextStyle(color = SecondaryColor2),
-            modifier = Modifier
-                .padding(top = 5.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-        HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { currentPage ->
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
             Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .background(shape = RoundedCornerShape(16.dp), color = SecondaryColor1)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (currentPage == 0) {
-                    NewQuizHead()
-                } else {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Base64QuizQuestionCreation(quizQuestionIndex = currentPage - 1)
-                    }
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Previous",
-                fontSize = 15.sp,
-                style = TextStyle(color = Color.Black.copy(alpha = if (pagerState.canScrollBackward) 1f else 0.5f)),
-                modifier = Modifier.clickable {
-                    if (pagerState.canScrollBackward) {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                        }
-                    }
-                })
-            Text(if (pagerState.canScrollForward) "Next question" else "New question",
-                fontSize = 15.sp,
-                style = TextStyle(color = Color.Black),
-                modifier = Modifier.clickable {
-                    coroutineScope.launch {
-                        if (pagerState.canScrollForward) {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        } else if (base64Questions.size < 50) {
-                            quizManagingViewModel.addEmptyBase64Question()
-                        }
-                    }
-                })
-            Text(
-                "Finish",
-                fontSize = 15.sp,
-                style = TextStyle(color = Color.Black),
-                modifier = Modifier.clickable {
-                    coroutineScope.launch {
-                        if (base64Questions.size < 3) {
-                            Toast.makeText(
-                                context,
-                                "A quiz should contain at least 3 questions",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                Text(
+                    text = if (initialQuizId == null) "Create a new quiz!" else "Update ${initialBase64Quiz?.name ?: ""}",
+                    fontFamily = FontFamily(
+                        Font(R.font.oswald_regular)
+                    ),
+                    color = Color.White,
+                    fontSize = 30.sp
+                )
+
+                TextField(
+                    value = if (initialQuizId == null) newBase64Quiz.name else initialBase64Quiz?.name
+                        ?: "",
+                    onValueChange = { newNameValue ->
+                        if (initialQuizId == null) {
+                            newBase64Quiz = newBase64Quiz.copy(name = newNameValue)
                         } else {
-                            val invalidQuestion = base64Questions.find { question ->
-                                question.options.all { option -> !option.isCorrect }
-                            }
-                            if (invalidQuestion != null) {
-                                val invalidQuestionIndex =
-                                    base64Questions.indexOf(invalidQuestion) + 1
-                                Toast.makeText(
-                                    context,
-                                    "Question $invalidQuestionIndex has no correct options",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-//                                quizManagingViewModel.saveQuiz(userId)
-//                                onFinishClick()
-                                if (initialQuizId == null) {
-                                    quizManagingViewModel.saveQuiz(userId)
-                                } else {
-                                    quizManagingViewModel.updateQuizByUserId(userId)
-                                }
-                                navController.navigate(QuizRoutes.MainPage) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        inclusive = true
-                                    }
-                                }
-                            }
+                            initialBase64Quiz = initialBase64Quiz?.copy(name = newNameValue)
+                        }
+                    },
+                    label = { Text("Name") }
+                )
+                TextField(
+                    value = if (initialQuizId == null) newBase64Quiz.description
+                        ?: "" else initialBase64Quiz?.description
+                        ?: "",
+                    onValueChange = { newDescriptionValue ->
+                        if (initialQuizId == null) {
+                            newBase64Quiz = newBase64Quiz.copy(description = newDescriptionValue)
+                        } else {
+                            initialBase64Quiz =
+                                initialBase64Quiz?.copy(description = newDescriptionValue)
+                        }
+                    },
+                    label = { Text("Description") }
+                )
+                if (initialQuizId == null && newBase64Quiz.base64Image == null ||
+                    initialQuizId != null && initialBase64Quiz?.base64Image == null
+                ) {
+                    Button(
+                        onClick = {
+                            imagePickerLauncher.launch("image/*")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MainColor,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Row {
+                            Icon(
+                                painter = painterResource(R.drawable.image_logo),
+                                "Pick an image"
+                            )
+                            Text(
+                                "Add an image",
+                                fontFamily = FontFamily(Font(R.font.oswald_light))
+                            )
                         }
                     }
                 }
-            )
+
+                listOf(
+                    initialBase64Quiz?.base64Image,
+                    newBase64Quiz.base64Image
+                ).find { it != null }
+                    ?.let {
+                        val bitmap = base64ToBitmap(it)
+                        Box(
+                            modifier = Modifier
+                                .size(300.dp)
+                                .clip(shape = RoundedCornerShape(8.dp))
+                        ) {
+                            Image(
+                                painter = BitmapPainter(bitmap.asImageBitmap()),
+                                contentDescription = "Selected Image",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .align(
+                                        Alignment.TopEnd
+                                    )
+                                    .padding(4.dp)
+                                    .padding(4.dp)
+                                    .clickable {
+                                        if (initialQuizId != null) {
+                                            initialBase64Quiz =
+                                                initialBase64Quiz?.copy(base64Image = null)
+                                        } else {
+                                            newBase64Quiz = newBase64Quiz.copy(base64Image = null)
+                                        }
+                                    }
+                                    .clip(shape = CircleShape)
+                                    .background(color = Color.White),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    "Delete the image",
+                                )
+                            }
+                        }
+                    }
+
+            }
         }
     }
 }

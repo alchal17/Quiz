@@ -31,6 +31,7 @@ class QuizUserReadingAPI(override val client: HttpClient) : ReadingAPI<QuizUser>
         }
     }
 
+
     suspend fun getUserByUsername(username: String): ApiResponse<QuizUser> {
         val url = "$serverPath$currentRoute/get_by_username?username=$username"
         return try {

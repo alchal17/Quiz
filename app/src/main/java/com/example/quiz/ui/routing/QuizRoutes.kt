@@ -12,7 +12,6 @@ sealed interface QuizRoutes {
 
     @Serializable
     data class ManageQuizPage(
-        val headerText: String = "Create a new quiz!",
         val base64QuizId: Int? = null
     ) :
         QuizRoutes

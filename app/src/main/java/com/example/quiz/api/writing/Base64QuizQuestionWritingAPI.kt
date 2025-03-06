@@ -1,11 +1,11 @@
-package com.example.quiz.api.reading
+package com.example.quiz.api.writing
 
 import com.example.quiz.models.request_representation.Base64QuizQuestion
 import io.ktor.client.HttpClient
 import kotlinx.serialization.KSerializer
 
-class Base64QuizQuestionOptionsReadingAPI(override val client: HttpClient) :
-    ReadingAPI<Base64QuizQuestion>() {
+class Base64QuizQuestionWritingAPI(override val client: HttpClient) :
+    WritingAPI<Base64QuizQuestion>() {
     override val currentRoute: String
         get() = "/quiz_question"
 

@@ -15,5 +15,7 @@ data class Base64QuizQuestion(
     @SerialName("multiple_choices")
     val multipleChoices: Boolean,
     @SerialName("seconds_to_answer")
-    val secondsToAnswer: Int
+    val secondsToAnswer: Int,
+    @SerialName("oder_number")
+    val orderNumber: Int
 ) : Model

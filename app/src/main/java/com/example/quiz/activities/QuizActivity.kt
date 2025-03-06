@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -41,14 +40,12 @@ import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.QuizTheme
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 class QuizActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         val userID = intent.getIntExtra("user_id", 0)
+        enableEdgeToEdge()
         setContent {
             val coroutineScope = rememberCoroutineScope()
 
@@ -57,16 +54,15 @@ class QuizActivity : ComponentActivity() {
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val navigationDrawerItems =
                 listOf(
-                    TabBarItem("Home", selectedIcon = Icons.Default.Home, QuizRoutes.MainPage),
+                    TabBarItem(
+                        "Home",
+                        selectedIcon = Icons.Default.Home,
+                        QuizRoutes.MainPage
+                    ),
                     TabBarItem(
                         "Settings",
                         selectedIcon = Icons.Default.Settings,
                         QuizRoutes.Settings
-                    ),
-                    TabBarItem(
-                        "New quiz",
-                        selectedIcon = Icons.Default.Add,
-                        QuizRoutes.ManageQuizPage()
                     ),
                     TabBarItem(
                         title = "Your quizzes",
@@ -122,11 +118,8 @@ class QuizActivity : ComponentActivity() {
 
                             composable<QuizRoutes.ManageQuizPage> {
                                 val args = it.toRoute<QuizRoutes.ManageQuizPage>()
-                                val quizManagingViewModel: QuizManagingViewModel =
-                                    koinViewModel { parametersOf(args.base64QuizId) }
                                 ManageQuizPage(
                                     navController = navController,
-                                    headerText = args.headerText,
                                     userId = userID,
                                     initialQuizId = args.base64QuizId,
                                 )

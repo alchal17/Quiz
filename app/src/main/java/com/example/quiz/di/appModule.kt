@@ -1,7 +1,16 @@
 package com.example.quiz.di
 
 import android.app.Application
+import com.example.quiz.api.reading.Base64QuizQuestionReadingAPI
+import com.example.quiz.api.reading.Base64QuizReadingAPI
+import com.example.quiz.api.reading.QuizQuestionOptionsReadingAPI
+import com.example.quiz.api.reading.QuizQuestionReadingAPI
+import com.example.quiz.api.reading.QuizReadingAPI
+import com.example.quiz.api.reading.QuizUserReadingAPI
+import com.example.quiz.api.writing.Base64QuizQuestionWritingAPI
 import com.example.quiz.api.writing.Base64QuizWritingAPI
+import com.example.quiz.api.writing.QuizQuestionOptionsWritingAPI
+import com.example.quiz.api.writing.QuizUserWritingAPI
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.auth.MainSignInHelper
 import com.example.quiz.viewmodels.QuizQuestionOptionViewModel
@@ -31,7 +40,7 @@ val appModule = module {
 
     singleOf(::MainSignInHelper) { bind<BasicSignInHelper>() }
 
-    single {
+    single<HttpClient> {
         HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
@@ -40,11 +49,17 @@ val appModule = module {
     }
 
 
-    singleOf(::QuizUsersAPI)
+    singleOf(::Base64QuizQuestionReadingAPI)
+    singleOf(::Base64QuizReadingAPI)
+    singleOf(::QuizQuestionOptionsReadingAPI)
+    singleOf(::QuizReadingAPI)
+    singleOf(::QuizUserReadingAPI)
+    singleOf(::QuizQuestionReadingAPI)
+
+    singleOf(::Base64QuizQuestionWritingAPI)
     singleOf(::Base64QuizWritingAPI)
-    singleOf(::QuizAPI)
-    singleOf(::QuizQuestionsAPI)
-    singleOf(::QuizQuestionOptionsAPI)
+    singleOf(::QuizQuestionOptionsWritingAPI)
+    singleOf(::QuizUserWritingAPI)
 
     viewModelOf(::QuizUserViewModel)
     viewModelOf(::QuizViewModel)
