@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,12 +49,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.quiz.R
 import com.example.quiz.api.ApiResponse
+import com.example.quiz.models.database_representation.QuizQuestion
 import com.example.quiz.models.request_representation.Base64Quiz
 import com.example.quiz.ui.base64ToBitmap
 import com.example.quiz.ui.bitmapToBase64
+import com.example.quiz.ui.elements.QuestionCard
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.viewmodels.QuizQuestionViewModel
 import com.example.quiz.viewmodels.QuizViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.io.InputStream
 
@@ -68,6 +73,9 @@ fun ManageQuizPage(
 
 
     var initialBase64Quiz: Base64Quiz? by remember { mutableStateOf(null) }
+    var questions by remember { mutableStateOf(emptyList<QuizQuestion>()) }
+    var topText by remember { mutableStateOf("") }
+
     var newBase64Quiz by remember {
         mutableStateOf(
             //Creating a new empty quiz
@@ -97,6 +105,12 @@ fun ManageQuizPage(
             }
         }
 
+    val coroutineScope = rememberCoroutineScope()
+
+    var isSaved = false
+
+    var createdQuizId = 0
+
 
 
     LaunchedEffect(Unit) {
@@ -105,6 +119,15 @@ fun ManageQuizPage(
                 is ApiResponse.Error -> {
                     Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
                     null
+                }
+
+                is ApiResponse.Success -> result.data
+            }
+            topText = "Update ${initialBase64Quiz?.name ?: ""}"
+            questions = when (val result = questionViewModel.getQuestionsByQuizId(initialQuizId)) {
+                is ApiResponse.Error -> {
+                    Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
+                    emptyList()
                 }
 
                 is ApiResponse.Success -> result.data
@@ -122,7 +145,7 @@ fun ManageQuizPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = if (initialQuizId == null) "Create a new quiz!" else "Update ${initialBase64Quiz?.name ?: ""}",
+                    text = if (initialQuizId == null) "Create a new quiz!" else topText,
                     fontFamily = FontFamily(
                         Font(R.font.oswald_regular)
                     ),
@@ -225,6 +248,75 @@ fun ManageQuizPage(
                         }
                     }
 
+            }
+            Button(onClick = {
+                coroutineScope.launch {
+                    if (initialQuizId == null) {
+                        if (!isSaved) {
+                            when (val result = quizViewModel.createBase64Quiz(
+                                newBase64Quiz
+                            )) {
+                                is ApiResponse.Error -> {
+                                    Toast.makeText(
+                                        context,
+                                        result.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                is ApiResponse.Success -> {
+                                    createdQuizId = result.data
+                                    isSaved = true
+                                    Toast.makeText(
+                                        context,
+                                        "Quiz successfully created",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        } else {
+                            when (val result =
+                                quizViewModel.updateQuiz(createdQuizId, newBase64Quiz)) {
+                                is ApiResponse.Error -> Toast.makeText(
+                                    context,
+                                    result.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                is ApiResponse.Success -> Toast.makeText(
+                                    context,
+                                    "Successfully updated",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else {
+                        initialBase64Quiz?.let {
+                            when (val result = quizViewModel.updateQuiz(initialQuizId, it)) {
+                                is ApiResponse.Error -> Toast.makeText(
+                                    context,
+                                    result.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                is ApiResponse.Success -> Toast.makeText(
+                                    context,
+                                    "Successfully updated",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            }) { Text((if (initialQuizId == null) "Save" else "Update") + " question main info") }
+        }
+        itemsIndexed(questions) { index, question ->
+            QuestionCard(question, {}, {})
+        }
+
+        item {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                Text("Create a new question")
             }
         }
     }

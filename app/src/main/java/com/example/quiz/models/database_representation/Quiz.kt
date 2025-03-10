@@ -8,8 +8,9 @@ import kotlinx.serialization.Serializable
 data class Quiz(
     override val id: Int? = null,
     val name: String,
-    val description: String,
+    @SerialName("user_id")
+    val userId: Int,
+    val description: String?,
     @SerialName("image_path")
     val imagePath: String?,
-    val questions: List<QuizQuestion>
 ): Model

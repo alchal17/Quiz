@@ -1,9 +1,11 @@
 package com.example.quiz.ui.pages
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -13,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.quiz.api.ApiResponse
@@ -49,7 +52,22 @@ fun UserQuizzesPage(userId: Int, navController: NavController) {
     }) { padding ->
         LazyColumn(contentPadding = padding) {
             items(quizzes) { quiz ->
-                QuizCard(quiz)
+                QuizCard(
+                    quiz, topOptions = listOf(
+                        {
+                            Icon(
+                                Icons.Default.Edit,
+                                "Edit ${quiz.name}",
+                                modifier = Modifier.clickable {
+                                    navController.navigate(
+                                        QuizRoutes.ManageQuizPage(
+                                            base64QuizId = quiz.id
+                                        )
+                                    )
+                                })
+                        },
+                    )
+                )
             }
         }
     }
