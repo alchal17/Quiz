@@ -54,6 +54,7 @@ import com.example.quiz.models.request_representation.Base64Quiz
 import com.example.quiz.ui.base64ToBitmap
 import com.example.quiz.ui.bitmapToBase64
 import com.example.quiz.ui.elements.QuestionCard
+import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.viewmodels.QuizQuestionViewModel
 import com.example.quiz.viewmodels.QuizViewModel
@@ -106,11 +107,6 @@ fun ManageQuizPage(
         }
 
     val coroutineScope = rememberCoroutineScope()
-
-    var isSaved = false
-
-    var createdQuizId = 0
-
 
 
     LaunchedEffect(Unit) {
@@ -252,7 +248,7 @@ fun ManageQuizPage(
             Button(onClick = {
                 coroutineScope.launch {
                     if (initialQuizId == null) {
-                        if (!isSaved) {
+                        if (newBase64Quiz.id == null) {
                             when (val result = quizViewModel.createBase64Quiz(
                                 newBase64Quiz
                             )) {
@@ -265,8 +261,8 @@ fun ManageQuizPage(
                                 }
 
                                 is ApiResponse.Success -> {
-                                    createdQuizId = result.data
-                                    isSaved = true
+                                    newBase64Quiz = newBase64Quiz.copy(id = result.data)
+//                                    isSaved = true
                                     Toast.makeText(
                                         context,
                                         "Quiz successfully created",
@@ -276,7 +272,7 @@ fun ManageQuizPage(
                             }
                         } else {
                             when (val result =
-                                quizViewModel.updateQuiz(createdQuizId, newBase64Quiz)) {
+                                quizViewModel.updateQuiz(newBase64Quiz.id ?: -1, newBase64Quiz)) {
                                 is ApiResponse.Error -> Toast.makeText(
                                     context,
                                     result.message,
@@ -313,11 +309,18 @@ fun ManageQuizPage(
         itemsIndexed(questions) { index, question ->
             QuestionCard(question, {}, {})
         }
-
-        item {
-            Button(modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                Text("Create a new question")
+        if (initialQuizId != null || newBase64Quiz.id != null)
+            item {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    navController.navigate(
+                        QuizRoutes.ManageQuiz.QuestionInfoPage(
+                            quizId = if (initialQuizId == null) newBase64Quiz.id ?: -1
+                            else initialBase64Quiz?.id ?: -1,
+                        )
+                    )
+                }) {
+                    Text("Create a new question")
+                }
             }
-        }
     }
 }

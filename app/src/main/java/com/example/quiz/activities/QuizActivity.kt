@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.quiz.ui.elements.Base64QuizQuestionManaging
 import com.example.quiz.ui.elements.MainTopBar
 import com.example.quiz.ui.pages.MainPage
 import com.example.quiz.ui.pages.ManageQuizPage
@@ -116,12 +117,20 @@ class QuizActivity : ComponentActivity() {
                                 MainPage(userID)
                             }
 
-                            composable<QuizRoutes.ManageQuizPage> {
-                                val args = it.toRoute<QuizRoutes.ManageQuizPage>()
+                            composable<QuizRoutes.ManageQuiz.QuizMainInfoPage> {
+                                val args = it.toRoute<QuizRoutes.ManageQuiz.QuizMainInfoPage>()
                                 ManageQuizPage(
                                     navController = navController,
                                     userId = userID,
                                     initialQuizId = args.base64QuizId,
+                                )
+                            }
+
+                            composable<QuizRoutes.ManageQuiz.QuestionInfoPage> {
+                                val args = it.toRoute<QuizRoutes.ManageQuiz.QuestionInfoPage>()
+                                Base64QuizQuestionManaging(
+                                    quizId = args.quizId,
+                                    initialQuestionId = args.base64QuestionId
                                 )
                             }
 

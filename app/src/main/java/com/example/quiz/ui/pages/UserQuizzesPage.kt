@@ -43,7 +43,9 @@ fun UserQuizzesPage(userId: Int, navController: NavController) {
     }
 
     Scaffold(containerColor = Color.Unspecified, floatingActionButton = {
-        FloatingActionButton(onClick = { navController.navigate(QuizRoutes.ManageQuizPage()) }) {
+        FloatingActionButton(onClick = {
+            navController.navigate(QuizRoutes.ManageQuiz.QuizMainInfoPage())
+        }) {
             Icon(
                 Icons.Filled.Add,
                 contentDescription = "Create a new quiz"
@@ -60,7 +62,7 @@ fun UserQuizzesPage(userId: Int, navController: NavController) {
                                 "Edit ${quiz.name}",
                                 modifier = Modifier.clickable {
                                     navController.navigate(
-                                        QuizRoutes.ManageQuizPage(
+                                        QuizRoutes.ManageQuiz.QuizMainInfoPage(
                                             base64QuizId = quiz.id
                                         )
                                     )
