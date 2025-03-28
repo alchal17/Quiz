@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.quiz.API_PATH
 import com.example.quiz.models.database_representation.Quiz
 
 @Composable
@@ -59,7 +60,7 @@ fun QuizCard(
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("http://192.168.0.104:8080/images/get_image?path=$imagePath")
+                            .data("$API_PATH/images/get_image?path=$imagePath")
                             .build()
                     ),
                     contentScale = ContentScale.Crop,

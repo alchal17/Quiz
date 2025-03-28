@@ -12,6 +12,9 @@ class QuizQuestionOptionViewModel(
 ) :
     ViewModel() {
 
+    suspend fun findAllByQuizQuestionId(id: Int): ApiResponse<List<QuizQuestionOption>> {
+        return readingAPI.findAllByQuizQuestionId(id)
+    }
 
     suspend fun getById(id: Int): ApiResponse<QuizQuestionOption> {
         return readingAPI.getById(id)

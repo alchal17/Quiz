@@ -128,6 +128,17 @@ fun ManageQuizPage(
 
                 is ApiResponse.Success -> result.data
             }
+        } else if (newBase64Quiz.id != null) {
+            questions =
+                when (val result =
+                    questionViewModel.getQuestionsByQuizId(newBase64Quiz.id ?: -1)) {
+                    is ApiResponse.Error -> {
+                        Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                        emptyList()
+                    }
+
+                    is ApiResponse.Success -> result.data
+                }
         }
     }
 
@@ -262,7 +273,6 @@ fun ManageQuizPage(
 
                                 is ApiResponse.Success -> {
                                     newBase64Quiz = newBase64Quiz.copy(id = result.data)
-//                                    isSaved = true
                                     Toast.makeText(
                                         context,
                                         "Quiz successfully created",
@@ -304,10 +314,24 @@ fun ManageQuizPage(
                         }
                     }
                 }
-            }) { Text((if (initialQuizId == null) "Save" else "Update") + " question main info") }
+            }) {
+                Text((if (initialQuizId == null) "Save" else "Update") + " question main info")
+            }
         }
         itemsIndexed(questions) { index, question ->
-            QuestionCard(question, {}, {})
+            QuestionCard(
+                question,
+                {
+                    navController.navigate(
+                        QuizRoutes.ManageQuiz.QuestionInfoPage(
+                            quizId = if (initialQuizId == null) newBase64Quiz.id
+                                ?: -1 else initialBase64Quiz?.id ?: -1,
+                            questionOrderNumber = index,
+                            base64QuestionId = question.id ?: -1
+                        )
+                    )
+                },
+                {})
         }
         if (initialQuizId != null || newBase64Quiz.id != null)
             item {
@@ -316,6 +340,8 @@ fun ManageQuizPage(
                         QuizRoutes.ManageQuiz.QuestionInfoPage(
                             quizId = if (initialQuizId == null) newBase64Quiz.id ?: -1
                             else initialBase64Quiz?.id ?: -1,
+                            questionOrderNumber = questions.maxByOrNull { it.orderNumber }?.id
+                                ?: 1,
                         )
                     )
                 }) {

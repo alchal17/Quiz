@@ -21,6 +21,10 @@ sealed interface QuizRoutes {
         data class QuizMainInfoPage(val base64QuizId: Int? = null) : ManageQuiz
 
         @Serializable
-        data class QuestionInfoPage(val quizId: Int, val base64QuestionId: Int? = null) : ManageQuiz
+        data class QuestionInfoPage(
+            val quizId: Int,
+            val questionOrderNumber: Int,
+            val base64QuestionId: Int? = null
+        ) : ManageQuiz
     }
 }

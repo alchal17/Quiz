@@ -41,4 +41,19 @@ abstract class ReadingAPI<T : @Serializable Model> : BaseAPI<T>() {
             ApiResponse.Error(message = e.message ?: "Unknown error")
         }
     }
+
+    protected suspend fun getEntityListByUrl(url: String): ApiResponse<List<T>> {
+        return try {
+            val result = client.get(url)
+            if (result.status == HttpStatusCode.OK) {
+                val data = Json.decodeFromString(listSerializer, result.bodyAsText())
+                ApiResponse.Success(data = data)
+            } else {
+                ApiResponse.Error(message = result.bodyAsText())
+            }
+        } catch (e: Exception) {
+            ApiResponse.Error(message = e.message ?: "Unknown error")
+        }
+
+    }
 }

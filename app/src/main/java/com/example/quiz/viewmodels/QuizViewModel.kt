@@ -43,4 +43,8 @@ class QuizViewModel(
     suspend fun getByUserId(userId: Int): ApiResponse<List<Quiz>> {
         return quizReadingAPI.getByUserId(userId)
     }
+
+    suspend fun getQuestionsNumber(quizId: Int):ApiResponse<Int>{
+        return quizReadingAPI.getQuestionsNumber(quizId)
+    }
 }
