@@ -54,7 +54,7 @@ abstract class WritingAPI<T: @Serializable Model> : BaseAPI<T>() {
                 contentType(ContentType.Application.Json)
                 setBody(Json.encodeToString(serializer, value))
             }
-            if (result.status == HttpStatusCode.Created) {
+            if (result.status == HttpStatusCode.OK) {
                 ApiResponse.Success(data = result.bodyAsText())
             } else {
                 ApiResponse.Error(result.bodyAsText())

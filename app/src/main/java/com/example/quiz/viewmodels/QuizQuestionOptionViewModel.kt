@@ -24,11 +24,22 @@ class QuizQuestionOptionViewModel(
         return writingAPI.create(quizQuestionOption)
     }
 
+    suspend fun createMultiple(options: List<QuizQuestionOption>): ApiResponse<List<Int>> {
+        return writingAPI.createMultiple(options)
+    }
+
     suspend fun updateQuizQuestionOption(
         optionId: Int,
         option: QuizQuestionOption
     ): ApiResponse<String> {
         return writingAPI.update(option, optionId)
+    }
+
+    suspend fun replaceQuestionOptions(
+        questionId: Int,
+        options: List<QuizQuestionOption>
+    ): ApiResponse<String> {
+        return writingAPI.replaceQuestionOptions(questionId, options)
     }
 
     suspend fun deleteQuizQuestionOption(id: Int): ApiResponse<String> {

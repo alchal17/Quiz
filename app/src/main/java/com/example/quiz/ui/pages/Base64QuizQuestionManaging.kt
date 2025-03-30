@@ -303,18 +303,30 @@ fun Base64QuizQuestionManaging(
                                     options.map { option ->
                                         option.copy(quizQuestionId = createdQuestionId)
                                     }
-                                val responses = optionsWithCorrectId.map { option ->
-                                    optionsViewModel.createQuizQuestionOption(option)
-                                }
-                                val responsesError = responses.find { it is ApiResponse.Error }
-                                if (responsesError != null) {
-                                    Toast.makeText(
-                                        context, (responsesError as ApiResponse.Error).message,
+                                when (val creationResponse =
+                                    optionsViewModel.createMultiple(optionsWithCorrectId)) {
+                                    is ApiResponse.Error -> Toast.makeText(
+                                        context, creationResponse.message,
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                } else {
-                                    navController.navigateUp()
+
+                                    is ApiResponse.Success -> {
+                                        navController.navigateUp()
+                                    }
                                 }
+
+//                                val responses = optionsWithCorrectId.map { option ->
+//                                    optionsViewModel.createQuizQuestionOption(option)
+//                                }
+//                                val responsesError = responses.find { it is ApiResponse.Error }
+//                                if (responsesError != null) {
+//                                    Toast.makeText(
+//                                        context, (responsesError as ApiResponse.Error).message,
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else {
+//                                    navController.navigateUp()
+//                                }
                             }
                         }
                     } else {
@@ -335,37 +347,51 @@ fun Base64QuizQuestionManaging(
                                                 ?: -1
                                         )
                                     }
-                                    val deletionResponses =
-                                        optionsWithCorrectQuestionId.map { option ->
-                                            optionsViewModel.deleteQuizQuestionOption(
-                                                option.id ?: -1
-                                            )
-                                        }
-                                    val deletionResponsesError =
-                                        deletionResponses.find { it is ApiResponse.Error }
-                                    if (deletionResponsesError != null) {
-                                        Toast.makeText(
-                                            context,
-                                            (deletionResponsesError as ApiResponse.Error).message,
+                                    when (val replacementResult =
+                                        optionsViewModel.replaceQuestionOptions(
+                                            initialQuestion.id ?: -1,
+                                            optionsWithCorrectQuestionId
+                                        )) {
+                                        is ApiResponse.Error -> Toast.makeText(
+                                            context, replacementResult.message,
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                    } else {
-                                        val creationResponses =
-                                            optionsWithCorrectQuestionId.map { option ->
-                                                optionsViewModel.createQuizQuestionOption(option)
-                                            }
-                                        val creationResponsesError =
-                                            creationResponses.find { it is ApiResponse.Error }
-                                        if (creationResponsesError != null) {
-                                            Toast.makeText(
-                                                context,
-                                                (creationResponsesError as ApiResponse.Error).message,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
+
+                                        is ApiResponse.Success -> {
                                             navController.navigateUp()
                                         }
                                     }
+//                                    val deletionResponses =
+//                                        optionsWithCorrectQuestionId.map { option ->
+//                                            optionsViewModel.deleteQuizQuestionOption(
+//                                                option.id ?: -1
+//                                            )
+//                                        }
+//                                    val deletionResponsesError =
+//                                        deletionResponses.find { it is ApiResponse.Error }
+//                                    if (deletionResponsesError != null) {
+//                                        Toast.makeText(
+//                                            context,
+//                                            (deletionResponsesError as ApiResponse.Error).message,
+//                                            Toast.LENGTH_SHORT
+//                                        ).show()
+//                                    } else {
+//                                        val creationResponses =
+//                                            optionsWithCorrectQuestionId.map { option ->
+//                                                optionsViewModel.createQuizQuestionOption(option)
+//                                            }
+//                                        val creationResponsesError =
+//                                            creationResponses.find { it is ApiResponse.Error }
+//                                        if (creationResponsesError != null) {
+//                                            Toast.makeText(
+//                                                context,
+//                                                (creationResponsesError as ApiResponse.Error).message,
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        } else {
+//                                            navController.navigateUp()
+//                                        }
+//                                    }
                                 }
                             }
                         }
