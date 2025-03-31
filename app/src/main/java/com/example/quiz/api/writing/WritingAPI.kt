@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
 
 abstract class WritingAPI<T: @Serializable Model> : BaseAPI<T>() {
     open suspend fun deleteById(id: Int): ApiResponse<String> {
-        val url = "$serverPath$currentRoute/delete/$id"
+        val url = "$serverPath$currentRoute/$id"
         return try {
             val result = client.delete(url)
             if (result.status == HttpStatusCode.OK) {
