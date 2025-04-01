@@ -11,8 +11,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,9 +55,11 @@ import com.example.quiz.models.database_representation.QuizQuestion
 import com.example.quiz.models.request_representation.Base64Quiz
 import com.example.quiz.ui.base64ToBitmap
 import com.example.quiz.ui.bitmapToBase64
+import com.example.quiz.ui.elements.DeletionDialogue
 import com.example.quiz.ui.elements.QuestionCard
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.ui.theme.MainColor
+import com.example.quiz.ui.theme.mainTextFieldColors
 import com.example.quiz.viewmodels.QuizQuestionViewModel
 import com.example.quiz.viewmodels.QuizViewModel
 import kotlinx.coroutines.launch
@@ -72,11 +76,9 @@ fun ManageQuizPage(
     val quizViewModel = koinViewModel<QuizViewModel>()
     val questionViewModel = koinViewModel<QuizQuestionViewModel>()
 
-
     var initialBase64Quiz: Base64Quiz? by remember { mutableStateOf(null) }
     var questions by remember { mutableStateOf(emptyList<QuizQuestion>()) }
     var topText by remember { mutableStateOf("") }
-
     var newBase64Quiz by remember {
         mutableStateOf(
             //Creating a new empty quiz
@@ -89,9 +91,9 @@ fun ManageQuizPage(
             )
         )
     }
+    var questionToBeDeleted by remember { mutableStateOf<QuizQuestion?>(null) }
 
     val context = LocalContext.current
-
     val imagePickerLauncher =
         rememberLauncherForActivityResult(GetContent()) { uri: Uri? ->
             uri?.let {
@@ -105,9 +107,9 @@ fun ManageQuizPage(
                 }
             }
         }
-
     val coroutineScope = rememberCoroutineScope()
 
+    val textFieldShape = RoundedCornerShape(12)
 
     LaunchedEffect(Unit) {
         if (initialQuizId != null) {
@@ -160,7 +162,11 @@ fun ManageQuizPage(
                     fontSize = 30.sp
                 )
 
+                Spacer(modifier = Modifier.height(10.dp))
+
                 TextField(
+                    colors = mainTextFieldColors(),
+                    shape = textFieldShape,
                     value = if (initialQuizId == null) newBase64Quiz.name else initialBase64Quiz?.name
                         ?: "",
                     onValueChange = { newNameValue ->
@@ -172,7 +178,12 @@ fun ManageQuizPage(
                     },
                     label = { Text("Name") }
                 )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
                 TextField(
+                    colors = mainTextFieldColors(),
+                    shape = textFieldShape,
                     value = if (initialQuizId == null) newBase64Quiz.description
                         ?: "" else initialBase64Quiz?.description
                         ?: "",
@@ -186,6 +197,7 @@ fun ManageQuizPage(
                     },
                     label = { Text("Description") }
                 )
+                Spacer(modifier = Modifier.height(5.dp))
                 if (initialQuizId == null && newBase64Quiz.base64Image == null ||
                     initialQuizId != null && initialBase64Quiz?.base64Image == null
                 ) {
@@ -256,6 +268,7 @@ fun ManageQuizPage(
                     }
 
             }
+            Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 coroutineScope.launch {
                     if (initialQuizId == null) {
@@ -315,23 +328,36 @@ fun ManageQuizPage(
                     }
                 }
             }) {
-                Text((if (initialQuizId == null) "Save" else "Update") + " question main info")
+                Text((if (initialQuizId == null) "Save" else "Update") + " quiz info")
             }
         }
+        item { Spacer(modifier = Modifier.height(20.dp)) }
+        item {
+            Text(
+                "Questions:",
+                color = Color.White,
+                fontFamily = FontFamily(Font(R.font.oswald_regular)),
+                fontSize = 15.sp
+            )
+        }
+        item { Spacer(modifier = Modifier.height(10.dp)) }
         itemsIndexed(questions) { index, question ->
-            QuestionCard(
-                question,
-                {
-                    navController.navigate(
-                        QuizRoutes.ManageQuiz.QuestionInfoPage(
-                            quizId = if (initialQuizId == null) newBase64Quiz.id
-                                ?: -1 else initialBase64Quiz?.id ?: -1,
-                            questionOrderNumber = index,
-                            base64QuestionId = question.id ?: -1
+            Column(modifier = Modifier.fillMaxWidth(0.9f)) {
+                QuestionCard(
+                    question,
+                    {
+                        navController.navigate(
+                            QuizRoutes.ManageQuiz.QuestionInfoPage(
+                                quizId = if (initialQuizId == null) newBase64Quiz.id
+                                    ?: -1 else initialBase64Quiz?.id ?: -1,
+                                questionOrderNumber = index,
+                                base64QuestionId = question.id ?: -1
+                            )
                         )
-                    )
-                },
-                {})
+                    },
+                    { questionToBeDeleted = question })
+                Spacer(modifier = Modifier.height(5.dp))
+            }
         }
         if (initialQuizId != null || newBase64Quiz.id != null)
             item {
@@ -348,5 +374,31 @@ fun ManageQuizPage(
                     Text("Create a new question")
                 }
             }
+    }
+    questionToBeDeleted?.let { question ->
+        DeletionDialogue(
+            onDismissRequest = { questionToBeDeleted = null },
+            name = question.text
+        ) {
+            coroutineScope.launch {
+                when (questionViewModel.deleteQuizQuestion(question.id ?: -1)) {
+                    is ApiResponse.Error -> {
+                        Toast.makeText(context, "Unable to delete", Toast.LENGTH_SHORT).show()
+                        questionToBeDeleted = null
+                    }
+
+                    is ApiResponse.Success -> {
+                        when (val response =
+                            questionViewModel.getQuestionsByQuizId(initialQuizId ?: -1)) {
+                            is ApiResponse.Error -> {}
+                            is ApiResponse.Success -> {
+                                questionToBeDeleted = null
+                                questions = response.data
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

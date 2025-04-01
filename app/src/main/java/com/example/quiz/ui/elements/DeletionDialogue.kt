@@ -6,15 +6,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
 @Composable
-fun QuizDeletionDialogue(
+fun DeletionDialogue(
     onDismissRequest: () -> Unit,
-    quizName: String,
+    name: String,
     onConfirmClick: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { Text("Confirmation") },
-        text = { Text("Are you sure you want to delete $quizName?") },
+        text = { Text("Are you sure you want to delete $name?") },
         confirmButton = {
             TextButton(onClick = {
                 onConfirmClick()

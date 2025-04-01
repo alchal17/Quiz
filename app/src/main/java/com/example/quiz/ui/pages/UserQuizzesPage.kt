@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.quiz.api.ApiResponse
 import com.example.quiz.models.database_representation.Quiz
+import com.example.quiz.ui.elements.DeletionDialogue
 import com.example.quiz.ui.elements.QuizCard
-import com.example.quiz.ui.elements.QuizDeletionDialogue
 import com.example.quiz.ui.routing.QuizRoutes
 import com.example.quiz.viewmodels.QuizViewModel
 import kotlinx.coroutines.launch
@@ -101,9 +101,9 @@ fun UserQuizzesPage(userId: Int, navController: NavController) {
             }
         }
         quizToBeDeleted?.let { quiz ->
-            QuizDeletionDialogue(
+            DeletionDialogue(
                 onDismissRequest = { quizToBeDeleted = null },
-                quizName = quiz.name
+                name = quiz.name
             ) {
                 coroutineScope.launch {
                     when (quizViewModel.deleteQuiz(quiz.id ?: -1)) {

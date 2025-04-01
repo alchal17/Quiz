@@ -314,19 +314,6 @@ fun Base64QuizQuestionManaging(
                                         navController.navigateUp()
                                     }
                                 }
-
-//                                val responses = optionsWithCorrectId.map { option ->
-//                                    optionsViewModel.createQuizQuestionOption(option)
-//                                }
-//                                val responsesError = responses.find { it is ApiResponse.Error }
-//                                if (responsesError != null) {
-//                                    Toast.makeText(
-//                                        context, (responsesError as ApiResponse.Error).message,
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//                                } else {
-//                                    navController.navigateUp()
-//                                }
                             }
                         }
                     } else {

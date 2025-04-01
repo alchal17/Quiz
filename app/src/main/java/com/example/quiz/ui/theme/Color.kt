@@ -28,7 +28,7 @@ fun mainTextFieldColors() = TextFieldDefaults.colors(
     focusedIndicatorColor = Color.Transparent,
     focusedTextColor = Color.Black,
     unfocusedTextColor = Color.Black,
-    focusedLabelColor = SecondaryColor2,
-    unfocusedLabelColor = SecondaryColor2,
+    focusedLabelColor = SecondaryColor4,
+    unfocusedLabelColor = SecondaryColor4,
     cursorColor = Color.Black
 )
