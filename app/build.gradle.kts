@@ -3,17 +3,18 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.lsparanoid)
 }
 
 android {
     namespace = "com.example.quiz"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.quiz"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -22,7 +23,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isShrinkResources = true
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -82,4 +84,5 @@ dependencies {
 
     implementation(libs.numberpicker)
 
+    implementation(libs.androidx.datastore.preferences)
 }
