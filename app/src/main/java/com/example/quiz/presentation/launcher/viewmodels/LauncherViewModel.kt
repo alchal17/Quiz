@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quiz.data.sp.InnerStorage
 import com.example.quiz.data.sp.SharedPreferencesKeyNames
+import com.example.quiz.presentation.launcher.states.LaunchState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -14,11 +17,26 @@ class LauncherViewModel(
     innerStorage: InnerStorage,
 ) : ViewModel() {
 
-    private val _isLoaded = MutableStateFlow(false)
-    val isLoaded = _isLoaded.asStateFlow()
+    private val isLoaded = MutableStateFlow(false)
 
-    private val _userId = MutableStateFlow<Int?>(null)
-    val userId = _userId.asStateFlow()
+    private val userId = MutableStateFlow<Int?>(null)
+
+    val launchState = combine(isLoaded, userId) { loaded, id ->
+        if (loaded) {
+            when (id) {
+                null -> LaunchState.AccountNotExists
+                -1 -> LaunchState.NotSignedIn
+                else -> LaunchState.SignedIn(id)
+            }
+        } else {
+            LaunchState.Loading
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = LaunchState.Loading
+    )
+
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,9 +49,9 @@ class LauncherViewModel(
             if (innerStorageValue != -1) {
                 //Add api call here to check if user exists by given id
             } else{
-                _userId.update { -1 }
+                userId.update { -1 }
             }
-            _isLoaded.update { true }
+            isLoaded.update { true }
         }
     }
 }

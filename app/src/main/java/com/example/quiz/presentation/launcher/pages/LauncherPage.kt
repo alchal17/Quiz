@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.quiz.presentation.launcher.states.LaunchState
 import com.example.quiz.presentation.launcher.viewmodels.LauncherViewModel
 import com.example.quiz.presentation.uiUtils.routes.LauncherRoutes
 import com.example.quiz.ui.theme.MainColor
@@ -31,29 +32,32 @@ fun LauncherPage() {
 
     val launcherViewModel = koinViewModel<LauncherViewModel>()
 
-    val userId by launcherViewModel.userId.collectAsStateWithLifecycle()
-    val isLoaded by launcherViewModel.isLoaded.collectAsStateWithLifecycle()
+    val launchState by launcherViewModel.launchState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isLoaded) {
-        when (userId) {
-            null -> {
+    LaunchedEffect(launchState) {
+        val currentState = launchState
+
+        when (currentState) {
+            is LaunchState.Loading -> {
+                // Do nothing, stay on loading screen
+            }
+
+            is LaunchState.AccountNotExists -> {
                 Toast.makeText(context, "Account no longer exists.", Toast.LENGTH_SHORT).show()
                 navController.navigate(LauncherRoutes.Auth) {
                     popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
 
-            -1 -> {
+            is LaunchState.NotSignedIn -> {
                 navController.navigate(LauncherRoutes.Auth) {
                     popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
 
-            else -> {
-                userId?.let {
-                    navController.navigate(LauncherRoutes.Quiz(it)) {
-                        popUpTo(LauncherRoutes.Launcher) { inclusive = true }
-                    }
+            is LaunchState.SignedIn -> {
+                navController.navigate(LauncherRoutes.Quiz(currentState.userId)) {
+                    popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
         }
