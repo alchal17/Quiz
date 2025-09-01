@@ -1,7 +1,6 @@
 package com.example.quiz
 
 import android.app.Application
-import com.example.quiz.di.appModule
 import com.example.quiz.di.dataModule
 import com.example.quiz.di.domainModule
 import com.example.quiz.di.presentationModule
@@ -13,7 +12,7 @@ class QuizApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@QuizApplication)
-            modules(dataModule, domainModule, presentationModule, appModule)
+            modules(dataModule, domainModule, presentationModule)
         }
     }
 }
