@@ -32,7 +32,7 @@ fun LauncherPage() {
 
     val launcherViewModel = koinViewModel<LauncherViewModel>()
 
-    val launchState by launcherViewModel.launchState.collectAsStateWithLifecycle()
+    val launchState by launcherViewModel.currentState.collectAsStateWithLifecycle()
 
     LaunchedEffect(launchState) {
         val currentState = launchState
