@@ -1,4 +1,4 @@
-package com.example.quiz.data.remote.api
+package com.example.quiz.data.source.remote.api
 
 import com.example.quiz.API_PATH
 import io.ktor.client.HttpClient

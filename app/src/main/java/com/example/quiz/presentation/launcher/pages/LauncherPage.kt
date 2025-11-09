@@ -35,9 +35,7 @@ fun LauncherPage() {
     val launchState by launcherViewModel.currentState.collectAsStateWithLifecycle()
 
     LaunchedEffect(launchState) {
-        val currentState = launchState
-
-        when (currentState) {
+        when (val currentState = launchState) {
             is LaunchState.Loading -> {
                 // Do nothing, stay on loading screen
             }

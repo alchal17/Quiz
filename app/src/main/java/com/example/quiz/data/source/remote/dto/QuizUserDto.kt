@@ -1,4 +1,4 @@
-package com.example.quiz.data.remote.dto
+package com.example.quiz.data.source.remote.dto
 
 import kotlinx.serialization.Serializable
 

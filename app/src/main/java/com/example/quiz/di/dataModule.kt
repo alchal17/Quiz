@@ -1,8 +1,10 @@
 package com.example.quiz.di
 
-import com.example.quiz.data.remote.api.QuizUserService
-import com.example.quiz.data.sp.InnerStorage
-import com.example.quiz.data.sp.InnerStorageImpl
+import com.example.quiz.data.repositories.QuizUserRepositoryImpl
+import com.example.quiz.data.source.remote.api.QuizUserService
+import com.example.quiz.data.source.local.InnerStorage
+import com.example.quiz.data.source.local.InnerStorageImpl
+import com.example.quiz.domain.repositories.quizUserRepository.QuizUserRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -27,4 +29,6 @@ val dataModule = module {
     }
 
     factoryOf(::QuizUserService)
+
+    factoryOf(::QuizUserRepositoryImpl) bind QuizUserRepository::class
 }

@@ -1,4 +1,4 @@
-package com.example.quiz.data.sp
+package com.example.quiz.data.source.local
 
 import org.lsposed.lsparanoid.Obfuscate
 

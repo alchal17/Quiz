@@ -1,4 +1,4 @@
-package com.example.quiz.data.sp
+package com.example.quiz.data.source.local
 
 interface InnerStorage {
     suspend fun setInt(sharedPreferencesKeyName: SharedPreferencesKeyNames, value: Int)
