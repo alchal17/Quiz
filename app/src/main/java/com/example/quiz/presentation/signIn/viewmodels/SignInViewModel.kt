@@ -36,12 +36,7 @@ class SignInViewModel(
             return@withContext when (val searchingResult = getQuizUserByEmailUseCase(email)) {
                 is DomainResult.Error -> null
                 is DomainResult.Success -> {
-                    val user = searchingResult.data
-                    innerStorage.setInt(
-                        SharedPreferencesKeyNames.USER_ID,
-                        user.id ?: return@withContext null
-                    )
-                    user
+                    searchingResult.data
                 }
             }
         }
