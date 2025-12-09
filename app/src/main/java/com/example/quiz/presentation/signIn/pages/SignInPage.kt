@@ -1,4 +1,4 @@
-package com.example.quiz.ui.pages
+package com.example.quiz.presentation.signIn.pages
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -36,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quiz.R
 import com.example.quiz.ui.elements.MainTopBar
+import com.example.quiz.ui.theme.MainColor
 import com.example.quiz.ui.theme.SecondaryColor1
 import com.example.quiz.ui.theme.SecondaryColor3
-import com.example.quiz.ui.theme.MainColor
 
 @Composable
-fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
+fun SignInPage() {
     var visible by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -59,7 +58,7 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
                         modifier = Modifier.fillMaxWidth(0.8f),
-                        onClick = onButtonClick,
+                        onClick = {},
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor3)
                     ) {
@@ -80,14 +79,14 @@ fun SignInPage(onButtonClick: () -> Unit, onRegistrationClick: () -> Unit) {
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    ClickableText(
+                    Text(
                         text = AnnotatedString("Not registered yet?"),
                         style = TextStyle(
                             color = SecondaryColor1,
                             fontSize = 20.sp,
                             textDecoration = TextDecoration.Underline
                         ),
-                    ) { onRegistrationClick() }
+                    )
                 }
             }
         }

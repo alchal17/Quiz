@@ -62,8 +62,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.play.services.auth)
-
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
@@ -85,4 +83,10 @@ dependencies {
     implementation(libs.numberpicker)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.androidx.compose.material.icons.extended)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 }

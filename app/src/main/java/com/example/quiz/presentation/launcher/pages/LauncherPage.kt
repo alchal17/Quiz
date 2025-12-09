@@ -19,6 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.quiz.presentation.launcher.states.LaunchState
 import com.example.quiz.presentation.launcher.viewmodels.LauncherViewModel
+import com.example.quiz.presentation.signIn.pages.SignInPage
+import com.example.quiz.presentation.signUp.pages.SignUpPage
 import com.example.quiz.presentation.uiUtils.routes.LauncherRoutes
 import com.example.quiz.ui.theme.MainColor
 import org.koin.androidx.compose.koinViewModel
@@ -42,13 +44,13 @@ fun LauncherPage() {
 
             is LaunchState.AccountNotExists -> {
                 Toast.makeText(context, "Account no longer exists.", Toast.LENGTH_SHORT).show()
-                navController.navigate(LauncherRoutes.Auth) {
+                navController.navigate(LauncherRoutes.SignIn) {
                     popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
 
             is LaunchState.NotSignedIn -> {
-                navController.navigate(LauncherRoutes.Auth) {
+                navController.navigate(LauncherRoutes.SignIn) {
                     popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
@@ -74,8 +76,11 @@ fun LauncherPage() {
                     CircularProgressIndicator()
                 }
             }
-            composable<LauncherRoutes.Auth> {
-                Text("Auth")
+            composable<LauncherRoutes.SignIn> {
+                SignInPage()
+            }
+            composable<LauncherRoutes.SignUp> {
+                SignUpPage()
             }
             composable<LauncherRoutes.Quiz> {
                 Text("Quiz")

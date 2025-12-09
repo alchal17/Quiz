@@ -10,5 +10,8 @@ sealed interface LauncherRoutes {
     data class Quiz(val userId: Int): LauncherRoutes
 
     @Serializable
-    data object Auth: LauncherRoutes
+    data object SignIn: LauncherRoutes
+
+    @Serializable
+    data object SignUp: LauncherRoutes
 }

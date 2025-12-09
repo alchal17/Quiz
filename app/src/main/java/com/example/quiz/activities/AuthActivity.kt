@@ -17,7 +17,7 @@ import com.example.quiz.api.ApiResponse
 import com.example.quiz.auth.BasicSignInHelper
 import com.example.quiz.inner_data.saveUserData
 import com.example.quiz.models.database_representation.QuizUser
-import com.example.quiz.ui.pages.SignInPage
+import com.example.quiz.presentation.signIn.pages.SignInPage
 import com.example.quiz.ui.pages.SignUpPage
 import com.example.quiz.ui.routing.AuthRoutes
 import com.example.quiz.ui.theme.QuizTheme
@@ -80,112 +80,112 @@ class AuthActivity : ComponentActivity() {
             val coroutineScope = rememberCoroutineScope()
 
             QuizTheme {
-                NavHost(navController = navController, startDestination = AuthRoutes.Auth.SignIn) {
-                    composable<AuthRoutes.Auth.SignIn> {
-                        SignInPage(
-                            onButtonClick = {
-                                googleSignInHelper.signIn(signInLauncher)
-                            },
-                            onRegistrationClick = {
-                                signUpEmail.value = null
-                                signUpUsername.value = ""
-                                photoUrl.value = null
-
-                                navController.navigate(AuthRoutes.Auth.SignUp)
-                            }
-                        )
-                    }
-                    composable<AuthRoutes.Auth.SignUp> {
-                        SignUpPage(
-                            usernameValue = signUpUsername.value,
-                            onUsernameChange = { newValue: String ->
-                                if (newValue.length < 21) signUpUsername.value = newValue
-                            },
-                            onAccountPick = { googleSignInHelper.signIn(signUpLauncher) },
-                            onRegistration = {
-                                if (signUpUsername.value.contains(" ")) {
-                                    Toast.makeText(
-                                        this@AuthActivity,
-                                        "Username shouldn't contain spaces",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else if (signUpUsername.value.length < 8) {
-                                    Toast.makeText(
-                                        this@AuthActivity,
-                                        "Username is too short",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else if (signUpUsername.value.length > 20) {
-                                    Toast.makeText(
-                                        this@AuthActivity,
-                                        "Username is too long",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else if (signUpEmail.value == null) {
-                                    Toast.makeText(
-                                        this@AuthActivity,
-                                        "Choose a Google account",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    coroutineScope.launch {
-                                        signUpEmail.value?.let { email ->
-                                            if (quizUserViewModel.findUserByEmail(email) != null) {
-                                                Toast.makeText(
-                                                    this@AuthActivity,
-                                                    "A user with this email already exists",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else if (quizUserViewModel.findUserByUsername(
-                                                    signUpUsername.value
-                                                ) != null
-                                            ) {
-                                                Toast.makeText(
-                                                    this@AuthActivity,
-                                                    "A user with this username already exists",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                val user = QuizUser(
-                                                    username = signUpUsername.value,
-                                                    email = email
-                                                )
-                                                when (val apiResponse =
-                                                    quizUserViewModel.createUser(user)) {
-                                                    is ApiResponse.Error -> {
-                                                        Toast.makeText(
-                                                            this@AuthActivity,
-                                                            apiResponse.message,
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
-
-                                                    is ApiResponse.Success -> {
-                                                        val newUserId = apiResponse.data
-                                                        saveUserData(
-                                                            newUserId, true,
-                                                            this@AuthActivity
-                                                        )
-                                                        val intent = Intent(
-                                                            this@AuthActivity,
-                                                            QuizActivity::class.java
-                                                        )
-                                                        intent.putExtra("user_id", newUserId)
-                                                        startActivity(intent)
-                                                    }
-                                                }
-
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            onFloatingActionButtonClick = { navController.navigateUp() },
-                            photoUrl = photoUrl.value,
-                            email = signUpEmail.value
-                        )
-                    }
-                }
+//                NavHost(navController = navController, startDestination = AuthRoutes.Auth.SignIn) {
+//                    composable<AuthRoutes.Auth.SignIn> {
+//                        SignInPage(
+//                            onButtonClick = {
+//                                googleSignInHelper.signIn(signInLauncher)
+//                            },
+//                            onRegistrationClick = {
+//                                signUpEmail.value = null
+//                                signUpUsername.value = ""
+//                                photoUrl.value = null
+//
+//                                navController.navigate(AuthRoutes.Auth.SignUp)
+//                            }
+//                        )
+//                    }
+//                    composable<AuthRoutes.Auth.SignUp> {
+//                        SignUpPage(
+//                            usernameValue = signUpUsername.value,
+//                            onUsernameChange = { newValue: String ->
+//                                if (newValue.length < 21) signUpUsername.value = newValue
+//                            },
+//                            onAccountPick = { googleSignInHelper.signIn(signUpLauncher) },
+//                            onRegistration = {
+//                                if (signUpUsername.value.contains(" ")) {
+//                                    Toast.makeText(
+//                                        this@AuthActivity,
+//                                        "Username shouldn't contain spaces",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else if (signUpUsername.value.length < 8) {
+//                                    Toast.makeText(
+//                                        this@AuthActivity,
+//                                        "Username is too short",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else if (signUpUsername.value.length > 20) {
+//                                    Toast.makeText(
+//                                        this@AuthActivity,
+//                                        "Username is too long",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else if (signUpEmail.value == null) {
+//                                    Toast.makeText(
+//                                        this@AuthActivity,
+//                                        "Choose a Google account",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else {
+//                                    coroutineScope.launch {
+//                                        signUpEmail.value?.let { email ->
+//                                            if (quizUserViewModel.findUserByEmail(email) != null) {
+//                                                Toast.makeText(
+//                                                    this@AuthActivity,
+//                                                    "A user with this email already exists",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
+//                                            } else if (quizUserViewModel.findUserByUsername(
+//                                                    signUpUsername.value
+//                                                ) != null
+//                                            ) {
+//                                                Toast.makeText(
+//                                                    this@AuthActivity,
+//                                                    "A user with this username already exists",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
+//                                            } else {
+//                                                val user = QuizUser(
+//                                                    username = signUpUsername.value,
+//                                                    email = email
+//                                                )
+//                                                when (val apiResponse =
+//                                                    quizUserViewModel.createUser(user)) {
+//                                                    is ApiResponse.Error -> {
+//                                                        Toast.makeText(
+//                                                            this@AuthActivity,
+//                                                            apiResponse.message,
+//                                                            Toast.LENGTH_SHORT
+//                                                        ).show()
+//                                                    }
+//
+//                                                    is ApiResponse.Success -> {
+//                                                        val newUserId = apiResponse.data
+//                                                        saveUserData(
+//                                                            newUserId, true,
+//                                                            this@AuthActivity
+//                                                        )
+//                                                        val intent = Intent(
+//                                                            this@AuthActivity,
+//                                                            QuizActivity::class.java
+//                                                        )
+//                                                        intent.putExtra("user_id", newUserId)
+//                                                        startActivity(intent)
+//                                                    }
+//                                                }
+//
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            },
+//                            onFloatingActionButtonClick = { navController.navigateUp() },
+//                            photoUrl = photoUrl.value,
+//                            email = signUpEmail.value
+//                        )
+//                    }
+//                }
             }
         }
     }

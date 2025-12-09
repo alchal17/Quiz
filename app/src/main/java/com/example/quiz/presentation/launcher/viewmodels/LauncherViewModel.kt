@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quiz.data.source.local.InnerStorage
 import com.example.quiz.data.source.local.SharedPreferencesKeyNames
 import com.example.quiz.domain.models.QuizUser
-import com.example.quiz.domain.repositories.DomainResult
+import com.example.quiz.domain.DomainResult
 import com.example.quiz.domain.usecase.quizUsers.GetQuizUserByIdUseCase
 import com.example.quiz.presentation.launcher.states.LaunchState
 import kotlinx.coroutines.Dispatchers
