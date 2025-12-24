@@ -4,9 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 
 interface EmailRepository {
    suspend fun signIn(
-        score: CoroutineScope,
-        onSuccess: suspend (email: String) -> Unit,
-        onError: suspend (Exception) -> Unit
+       coroutineScope: CoroutineScope,
+       onSuccess: suspend (email: String) -> Unit,
+       onError: suspend (Exception) -> Unit
     )
 
 }

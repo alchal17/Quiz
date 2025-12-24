@@ -57,7 +57,13 @@ class SignInViewModel(
                     )
                     _signInResult.update { SignInResult.UserFound(user.id) }
                 }
-            }, { error -> })
+            }, { error ->
+                _signInResult.update {
+                    SignInResult.Error(
+                        error.message ?: "Unknown error occurred."
+                    )
+                }
+            })
         }
     }
 }
