@@ -20,7 +20,7 @@ class EmailRepositoryImpl(
 
     override suspend fun signIn(
         scope: CoroutineScope,
-        onSuccess: suspend (email: String) -> Unit,
+        onSuccess: suspend (email: String, photoUrl: String?) -> Unit,
         onError: suspend (Exception) -> Unit
     ) {
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -47,7 +47,7 @@ class EmailRepositoryImpl(
 
     private suspend fun handleSignIn(
         result: GetCredentialResponse,
-        onSuccess: suspend (email: String) -> Unit,
+        onSuccess: suspend (email: String, photoUrl: String?) -> Unit,
         onError: suspend (Exception) -> Unit
     ) {
         when (val credential = result.credential) {
@@ -59,7 +59,8 @@ class EmailRepositoryImpl(
 
                         val email = googleIdTokenCredential.id
 
-                        onSuccess(email)
+                        val profilePicture = googleIdTokenCredential.profilePictureUri?.toString()
+                        onSuccess(email, profilePicture)
                     } catch (e: Exception) {
                         onError(e)
                     }

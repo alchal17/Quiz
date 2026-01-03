@@ -44,7 +44,7 @@ class SignInViewModel(
     fun pickAccount() {
         viewModelScope.launch {
             _signInResult.update { SignInResult.Loading }
-            emailRepository.signIn(this, { email ->
+            emailRepository.signIn(this, { email, _ ->
                 val user = findQuizUserByEmail(email)
                 if (user == null) {
                     _signInResult.update { SignInResult.Error("No such user with email $email") }

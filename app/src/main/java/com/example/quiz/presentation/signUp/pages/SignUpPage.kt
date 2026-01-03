@@ -1,5 +1,6 @@
 package com.example.quiz.presentation.signUp.pages
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -24,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,14 +52,34 @@ import com.example.quiz.ui.theme.mainTextFieldColors
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUpPage(navigateBack: () -> Unit) {
+fun SignUpPage(navigateBack: () -> Unit, navigateToQuizPage: (Int) -> Unit) {
+    val context = LocalContext.current
+
     var visible by remember { mutableStateOf(false) }
 
-    val signInViewModel = koinViewModel<SignUpViewModel>()
+    val signUpViewModel = koinViewModel<SignUpViewModel>()
 
-    val username by signInViewModel.username.collectAsStateWithLifecycle()
-    val email by signInViewModel.email.collectAsStateWithLifecycle()
-    val accountPickingResult by signInViewModel.accountPickingResult.collectAsStateWithLifecycle()
+    val username by signUpViewModel.username.collectAsStateWithLifecycle()
+    val email by signUpViewModel.email.collectAsStateWithLifecycle()
+    val photoUrl by signUpViewModel.photoUrl.collectAsStateWithLifecycle()
+
+    val accountPickingResult by signUpViewModel.accountPickingResult.collectAsStateWithLifecycle()
+    val registrationResult by signUpViewModel.registrationResult.collectAsStateWithLifecycle()
+
+    LaunchedEffect(registrationResult) {
+        when (val registrationResultCopy = registrationResult) {
+            is SignUpViewModel.RegistrationResult.Error -> Toast.makeText(
+                context, registrationResultCopy.message,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            SignUpViewModel.RegistrationResult.Loading -> {}
+            SignUpViewModel.RegistrationResult.NotTriedYet -> {}
+            is SignUpViewModel.RegistrationResult.Success -> navigateToQuizPage(
+                registrationResultCopy.userId
+            )
+        }
+    }
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(navigateBack, containerColor = SecondaryColor4) {
@@ -84,13 +106,13 @@ fun SignUpPage(navigateBack: () -> Unit) {
                         shape = RoundedCornerShape(50),
                         colors = mainTextFieldColors(),
                         value = username,
-                        onValueChange = { signInViewModel.setUsername(it) },
+                        onValueChange = { signUpViewModel.setUsername(it) },
                         singleLine = true,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { signInViewModel.pickGoogleAccount() },
+                        onClick = { signUpViewModel.pickGoogleAccount() },
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor3)
                     ) {
@@ -119,9 +141,9 @@ fun SignUpPage(navigateBack: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
-                        onClick = onRegistration,
+                        onClick = { signUpViewModel.registerUser() },
                         colors = ButtonDefaults.buttonColors(containerColor = SecondaryColor2)
-                    ) { androidx.compose.material3.Text("Create an account") }
+                    ) { Text("Create an account") }
                 }
             }
         }
