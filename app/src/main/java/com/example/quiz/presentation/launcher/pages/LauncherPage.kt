@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.quiz.presentation.launcher.states.LaunchState
 import com.example.quiz.presentation.launcher.viewmodels.LauncherViewModel
+import com.example.quiz.presentation.main.pages.MainPage
 import com.example.quiz.presentation.signIn.pages.SignInPage
 import com.example.quiz.presentation.signUp.pages.SignUpPage
 import com.example.quiz.presentation.uiUtils.routes.LauncherRoutes
@@ -57,7 +57,7 @@ fun LauncherPage() {
             }
 
             is LaunchState.SignedIn -> {
-                navController.navigate(LauncherRoutes.Quiz(currentState.userId)) {
+                navController.navigate(LauncherRoutes.Main(currentState.userId)) {
                     popUpTo(LauncherRoutes.Launcher) { inclusive = true }
                 }
             }
@@ -79,18 +79,29 @@ fun LauncherPage() {
             }
             composable<LauncherRoutes.SignIn> {
                 SignInPage(navigateToQuizPage = { userId ->
-                    navController.navigate(LauncherRoutes.Quiz(userId)) {
+                    navController.navigate(LauncherRoutes.Main(userId)) {
                         popUpTo(LauncherRoutes.SignIn) { inclusive = true }
                     }
                 }, navigateToSignUpPage = { navController.navigate(LauncherRoutes.SignUp) }
                 )
             }
             composable<LauncherRoutes.SignUp> {
-                SignUpPage()
+                SignUpPage(
+                    navigateBack = { navController.navigateUp() },
+                    navigateToQuizPage = {
+                        navController.navigate(LauncherRoutes.Main(it)) {
+                            popUpTo<LauncherRoutes.SignUp> {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
             }
-            composable<LauncherRoutes.Quiz> {
-                val args = it.toRoute<LauncherRoutes.Quiz>()
-                Text("Quiz page. User Id: ${args.userId}")
+            composable<LauncherRoutes.Main> {
+                val args = it.toRoute<LauncherRoutes.Main>()
+                MainPage(args.userId) {
+                    navController.navigateUp()
+                }
             }
         }
     }
