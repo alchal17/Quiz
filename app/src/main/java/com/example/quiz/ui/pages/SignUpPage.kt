@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.quiz.R
-import com.example.quiz.ui.elements.MainTopBar
+import com.example.common.presentation.elements.MainTopBar
 import com.example.quiz.ui.theme.SecondaryColor4
 import com.example.quiz.ui.theme.SecondaryColor3
 import com.example.quiz.ui.theme.MainColor

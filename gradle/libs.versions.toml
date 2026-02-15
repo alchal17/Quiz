@@ -30,6 +30,8 @@ lsparanoid = "0.6.0"
 
 credentialManager = "1.5.0"
 googleid = "1.1.1"
+appcompat = "1.7.1"
+material = "1.13.0"
 
 
 [libraries]
@@ -66,6 +68,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentialManager" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialManager" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 
@@ -79,3 +83,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version = "2.2.21" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 lsparanoid = { id = "org.lsposed.lsparanoid", version.ref = "lsparanoid" }
+android-library = { id = "com.android.library", version.ref = "agp" }

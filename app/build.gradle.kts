@@ -82,11 +82,12 @@ dependencies {
 
     implementation(libs.numberpicker)
 
-    implementation(libs.androidx.datastore.preferences)
-
     implementation(libs.androidx.compose.material.icons.extended)
 
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
+    implementation(project(":common"))
+    implementation(project(":auth"))
 }

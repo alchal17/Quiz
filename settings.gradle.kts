@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Quiz"
 include(":app")
- 
+include(":common")
+include(":auth")
