@@ -1,7 +1,7 @@
-package com.example.quiz.domain.repositories
+package com.example.common.domain.repositories
 
-import com.example.quiz.domain.DomainResult
-import com.example.quiz.domain.models.QuizUser
+import com.example.common.domain.DomainResult
+import com.example.common.domain.models.QuizUser
 
 interface QuizUserRepository {
     suspend fun getById(id: Int): DomainResult<QuizUser>

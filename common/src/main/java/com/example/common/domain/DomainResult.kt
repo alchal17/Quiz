@@ -1,4 +1,4 @@
-package com.example.quiz.domain
+package com.example.common.domain
 
 sealed interface DomainResult<out T> {
     data class Success<T>(val data: T) : DomainResult<T>

@@ -4,9 +4,9 @@ import com.example.quiz.data.mappers.toQuizUser
 import com.example.quiz.data.mappers.toQuizUserDto
 import com.example.quiz.data.source.remote.api.ApiCallResult
 import com.example.quiz.data.source.remote.api.QuizUserService
-import com.example.quiz.domain.models.QuizUser
-import com.example.quiz.domain.DomainResult
-import com.example.quiz.domain.repositories.QuizUserRepository
+import com.example.common.domain.models.QuizUser
+import com.example.common.domain.DomainResult
+import com.example.common.domain.repositories.QuizUserRepository
 
 class QuizUserRepositoryImpl(private val quizUserService: QuizUserService) : QuizUserRepository {
     override suspend fun getById(id: Int): DomainResult<QuizUser> {

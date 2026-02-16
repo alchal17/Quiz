@@ -5,7 +5,7 @@ import com.example.quiz.data.repositories.EmailRepositoryImpl
 import com.example.quiz.data.repositories.QuizUserRepositoryImpl
 import com.example.quiz.data.source.remote.api.QuizUserService
 import com.example.quiz.domain.repositories.EmailRepository
-import com.example.quiz.domain.repositories.QuizUserRepository
+import com.example.common.domain.repositories.QuizUserRepository
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
