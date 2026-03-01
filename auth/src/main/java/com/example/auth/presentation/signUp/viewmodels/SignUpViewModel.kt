@@ -2,12 +2,12 @@ package com.example.auth.presentation.signUp.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quiz.data.source.local.InnerStorage
-import com.example.quiz.data.source.local.SharedPreferencesKeyNames
-import com.example.quiz.domain.DomainResult
-import com.example.quiz.domain.models.QuizUser
-import com.example.quiz.domain.repositories.EmailRepository
-import com.example.quiz.domain.usecase.quizUsers.CreateQuizUserUseCase
+import com.example.auth.domain.repositories.EmailRepository
+import com.example.auth.domain.useCase.quizUsers.CreateQuizUserUseCase
+import com.example.common.data.source.local.sp.InnerStorage
+import com.example.common.data.source.local.sp.SharedPreferencesKeyNames
+import com.example.common.domain.DomainResult
+import com.example.common.domain.models.QuizUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

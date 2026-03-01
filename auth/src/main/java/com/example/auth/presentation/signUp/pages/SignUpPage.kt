@@ -41,14 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
-import com.example.quiz.R
+import com.example.auth.R
 import com.example.auth.presentation.signUp.viewmodels.SignUpViewModel
-import com.example.quiz.ui.elements.MainTopBar
-import com.example.quiz.ui.theme.MainColor
-import com.example.quiz.ui.theme.SecondaryColor2
-import com.example.quiz.ui.theme.SecondaryColor3
-import com.example.quiz.ui.theme.SecondaryColor4
-import com.example.quiz.ui.theme.mainTextFieldColors
+import com.example.common.presentation.elements.MainTopBar
+import com.example.common.presentation.elements.colors.MainColor
+import com.example.common.presentation.elements.colors.SecondaryColor2
+import com.example.common.presentation.elements.colors.SecondaryColor3
+import com.example.common.presentation.elements.colors.SecondaryColor4
+import com.example.common.presentation.elements.colors.mainTextFieldColors
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

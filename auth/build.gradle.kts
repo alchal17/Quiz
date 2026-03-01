@@ -20,7 +20,6 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -60,6 +59,10 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.coil.compose)
+
+    implementation(libs.androidx.compose.material.icons.extended)
 
     api(project(":common"))
 }

@@ -78,11 +78,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(libs.coil.compose)
-
     implementation(libs.numberpicker)
-
-    implementation(libs.androidx.compose.material.icons.extended)
 
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)

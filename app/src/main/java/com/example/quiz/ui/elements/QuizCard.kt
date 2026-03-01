@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.quiz.API_PATH
+import com.example.common.API_PATH
 import com.example.quiz.models.database_representation.Quiz
 import com.example.quiz.ui.theme.SecondaryColor4
 

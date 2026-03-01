@@ -1,6 +1,6 @@
 package com.example.quiz.api
 
-import com.example.quiz.API_PATH
+import com.example.common.API_PATH
 import com.example.quiz.models.Model
 import io.ktor.client.HttpClient
 import kotlinx.serialization.KSerializer

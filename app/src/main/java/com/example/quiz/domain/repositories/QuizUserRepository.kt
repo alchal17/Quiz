@@ -1,4 +1,4 @@
-package com.example.common.domain.repositories
+package com.example.quiz.domain.repositories
 
 import com.example.common.domain.DomainResult
 import com.example.common.domain.models.QuizUser

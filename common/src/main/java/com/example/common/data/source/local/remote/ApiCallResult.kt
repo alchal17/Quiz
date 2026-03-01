@@ -1,4 +1,4 @@
-package com.example.quiz.data.source.remote.api
+package com.example.common.data.source.local.remote
 
 sealed interface ApiCallResult<out T> {
     data class Success<out T>(val data: T) : ApiCallResult<T>

@@ -1,6 +1,6 @@
-package com.example.quiz.data.source.remote.api
+package com.example.common.data.source.local.remote
 
-import com.example.quiz.API_PATH
+import com.example.common.API_PATH
 import io.ktor.client.HttpClient
 
 abstract class BaseService {

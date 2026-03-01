@@ -1,8 +1,8 @@
-package com.example.common.domain.usecases.quizUsers
+package com.example.quiz.domain.usecase.quizUsers
 
 import com.example.common.domain.DomainResult
 import com.example.common.domain.models.QuizUser
-import com.example.common.domain.repositories.QuizUserRepository
+import com.example.quiz.domain.repositories.QuizUserRepository
 
 class GetQuizUserByEmailUseCase(private val quizUserRepository: QuizUserRepository) {
     suspend operator fun invoke(email: String): DomainResult<QuizUser> =

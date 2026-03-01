@@ -6,7 +6,7 @@ import com.example.quiz.data.source.local.InnerStorage
 import com.example.quiz.data.source.local.SharedPreferencesKeyNames
 import com.example.common.domain.models.QuizUser
 import com.example.common.domain.DomainResult
-import com.example.common.domain.usecases.quizUsers.GetQuizUserByIdUseCase
+import com.example.quiz.domain.usecase.quizUsers.GetQuizUserByIdUseCase
 import com.example.quiz.presentation.launcher.states.LaunchState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

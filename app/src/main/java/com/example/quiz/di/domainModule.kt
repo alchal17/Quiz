@@ -1,8 +1,8 @@
 package com.example.quiz.di
 
 import com.example.quiz.domain.usecase.quizUsers.CreateQuizUserUseCase
-import com.example.common.domain.usecases.quizUsers.GetQuizUserByEmailUseCase
-import com.example.common.domain.usecases.quizUsers.GetQuizUserByIdUseCase
+import com.example.quiz.domain.usecase.quizUsers.GetQuizUserByEmailUseCase
+import com.example.quiz.domain.usecase.quizUsers.GetQuizUserByIdUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
