@@ -1,8 +1,8 @@
-package com.example.quiz.data.source.remote.api
+package com.example.auth.data.source.remote.api
 
+import com.example.auth.data.source.remote.dto.QuizUserDto
 import com.example.common.data.source.local.remote.ApiCallResult
 import com.example.common.data.source.local.remote.BaseService
-import com.example.quiz.data.source.remote.dto.QuizUserDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException

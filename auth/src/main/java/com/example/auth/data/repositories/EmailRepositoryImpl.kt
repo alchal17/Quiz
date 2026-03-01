@@ -1,11 +1,11 @@
-package com.example.quiz.data.repositories
+package com.example.auth.data.repositories
 
 import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import com.example.quiz.domain.repositories.EmailRepository
+import com.example.auth.domain.repositories.EmailRepository
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
