@@ -1,0 +1,17 @@
+package com.example.launcher.presentation.uiUtils.routes
+
+import kotlinx.serialization.Serializable
+
+sealed interface LauncherRoutes {
+    @Serializable
+    data object Launcher : LauncherRoutes
+
+    @Serializable
+    data class Main(val userId: Int): LauncherRoutes
+
+    @Serializable
+    data object SignIn: LauncherRoutes
+
+    @Serializable
+    data object SignUp: LauncherRoutes
+}

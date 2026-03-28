@@ -50,10 +50,6 @@ dependencies {
     implementation(libs.androidx.material3)
 
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
-
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.serialization)
